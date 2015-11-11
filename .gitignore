@@ -1,0 +1,16 @@
+# Include your project-specific ignores in this file
+# Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
+
+/bower_components
+/node_modules
+/builds/prod
+/test_out
+/.idea
+
+.DS_Store
+Thumbs.db
+sh.exe.stackdump
+builds/dev/app.js
+builds/dev/libs.js
+builds/dev/theme.css
+builds/dev/fonts/
