@@ -43,7 +43,6 @@ console.log('Main.js');
 
             .otherwise({ redirectTo: '/workout' });
     }
-    MainConfig.$inject = ["$routeProvider"];
 
     // @ngInject
     function MainController($scope, $rootScope) {
@@ -53,7 +52,6 @@ console.log('Main.js');
         s.message = 'Welcome to the KeepStrong App!';
         s.run = 'Go fast, lets run';
     }
-    MainController.$inject = ["$scope", "$rootScope"];
 
 
     // @ngInject
@@ -62,7 +60,6 @@ console.log('Main.js');
         s.message = 'Exercises page!';
         $rootScope.currentPage = 'exercises';
     }
-    ExerciseController.$inject = ["$rootScope"];
 
     // @ngInject
     function StatsController($rootScope) {
@@ -71,7 +68,6 @@ console.log('Main.js');
         s.message = 'Exercises page!';
         $rootScope.currentPage = 'statistics';
     }
-    StatsController.$inject = ["$rootScope"];
 
     // @ngInject
     function AboutController($rootScope) {
@@ -80,18 +76,5 @@ console.log('Main.js');
         s.message = 'Exercises page!';
         $rootScope.currentPage = 'about';
     }
-    AboutController.$inject = ["$rootScope"];
 
 })();
-/**
- * Created by michaeltreser on 11/11/15.
- */
-
-angular.module('keepStrong')
-    .controller('ExerCtrl', ExercisesController);
-
-function ExercisesController() {
-    console.log('Exercises');
-    var e = this;
-    e.message = "Let's start with some expertis!";
-};
