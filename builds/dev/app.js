@@ -9,12 +9,13 @@ console.log('Main.js');
 
     angular.module('kpStr', [
             'ngRoute',
-            'ui.bootstrap'])
+            'ui.bootstrap',
+            'kpStr.stats'
+    ])
         .controller('MainCtrl', MainController)
         .controller('LoginCtrl', LoginController)
         .controller('RegCtrl', RegistrationController)
         .controller('ExerCtrl', ExerciseController)
-        .controller('StatsCtrl', StatsController)
         .controller('AboutCtrl', AboutController)
         .config(MainConfig);
 
@@ -42,12 +43,6 @@ console.log('Main.js');
                 controller: 'ExerCtrl',
                 controllerAs: 'ec',
                 templateUrl: 'app/exercises/exercises.html'
-            })
-
-            .when('/statistics', {
-                controller: 'StatsCtrl',
-                controllerAs: 'sc',
-                templateUrl: 'app/statistics/statistics.html'
             })
 
             .when('/about', {
@@ -98,14 +93,6 @@ console.log('Main.js');
     }
     ExerciseController.$inject = ["$rootScope"];
 
-    // @ngInject
-    function StatsController($rootScope) {
-        var s = this;
-
-        s.message = 'Exercises page!';
-        $rootScope.currentPage = 'statistics';
-    }
-    StatsController.$inject = ["$rootScope"];
 
     // @ngInject
     function AboutController($rootScope) {
@@ -129,3 +116,66 @@ function ExercisesController() {
 
     s.message = "Let's start with some exercises!";
 };
+/**
+ * Created by michaeltreser on 11/14/15.
+ */
+
+;(function() {
+    'use strict';
+
+    angular.module('kpStr.stats', [
+        'ngRoute'
+    ])
+        .controller('StatsCtrl', StatsController)
+        .config(StatsConfig)
+        .filter('toLowerCase', toLowerCase);
+
+    /**
+     * Stats Controller
+     */
+
+    // @ngInject
+    function StatsController($rootScope, $http) {
+        var s = this;
+
+        $rootScope.currentPage = 'statistics';
+        s.message = 'Statistics page!';
+
+        $http.get('app/statistics/persons.json')
+            .success(function(data) {
+                s.persons = data;
+                console.log(data);
+            })
+
+            .error(function (reason) {
+                console.log(reason);
+            });
+
+
+    }
+    StatsController.$inject = ["$rootScope", "$http"];
+
+
+    // @ngInject
+    function StatsConfig($routeProvider) {
+        $routeProvider
+            .when('/statistics', {
+                controller: 'StatsCtrl',
+                controllerAs: 'sc',
+                templateUrl: 'app/statistics/statistics.html'
+            });
+    }
+    StatsConfig.$inject = ["$routeProvider"];
+
+    // @ngInject
+    function toLowerCase() {
+        return function(text) {
+            var filtered = text.toLocaleLowerCase();
+
+            return filtered;
+        }
+    }
+
+
+
+})();

@@ -9,12 +9,13 @@ console.log('Main.js');
 
     angular.module('kpStr', [
             'ngRoute',
-            'ui.bootstrap'])
+            'ui.bootstrap',
+            'kpStr.stats'
+    ])
         .controller('MainCtrl', MainController)
         .controller('LoginCtrl', LoginController)
         .controller('RegCtrl', RegistrationController)
         .controller('ExerCtrl', ExerciseController)
-        .controller('StatsCtrl', StatsController)
         .controller('AboutCtrl', AboutController)
         .config(MainConfig);
 
@@ -42,12 +43,6 @@ console.log('Main.js');
                 controller: 'ExerCtrl',
                 controllerAs: 'ec',
                 templateUrl: 'app/exercises/exercises.html'
-            })
-
-            .when('/statistics', {
-                controller: 'StatsCtrl',
-                controllerAs: 'sc',
-                templateUrl: 'app/statistics/statistics.html'
             })
 
             .when('/about', {
@@ -93,13 +88,6 @@ console.log('Main.js');
         $rootScope.currentPage = 'exercises';
     }
 
-    // @ngInject
-    function StatsController($rootScope) {
-        var s = this;
-
-        s.message = 'Exercises page!';
-        $rootScope.currentPage = 'statistics';
-    }
 
     // @ngInject
     function AboutController($rootScope) {

@@ -1,5 +1,14 @@
 <div class="statistics">
     <h2>Statistics</h2>
     <p>Please check your results for the last month.</p>
+    <p>{{sc.message}}</p>
     <button class="primary-btn">Check statistics</button>
+
+    <p>Good Morning MISHKA!</p>
+    <pre>{{sc.persons | json }}</pre>
+
+
+    <ul>
+        <li ng-repeat="person in sc.persons">{{person.name | toLowerCase }}</li>
+    </ul>
 </div>
