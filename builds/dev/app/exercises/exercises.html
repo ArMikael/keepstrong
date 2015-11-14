@@ -1,5 +1,5 @@
 <div class="exercises">
-    <h2>Exercises</h2>
+    <h2>{{ec.message}}</h2>
 
     <ul>
         <li>Подтягивания</li>
@@ -9,4 +9,34 @@
         <li>Прыжки</li>
         <li>Бег</li>
     </ul>
+
+    <div class="btn-group">
+        <label class="btn btn-primary" ng-model="checkModel.left" uib-btn-checkbox>Left</label>
+        <label class="btn btn-primary" ng-model="checkModel.middle" uib-btn-checkbox>Middle</label>
+        <label class="btn btn-primary" ng-model="checkModel.right" uib-btn-checkbox>Right</label>
+    </div>
+    <br/>
+    <br/>
+
+    <div class="col-md-10 col-lg-12">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. At aut ea exercitationem fugit iste iusto, nihil odit
+        possimus quibusdam reprehenderit, sequi soluta, veniam. At eius, eligendi molestias quod rerum ullam!
+    </div>
+
+    <button class="md-fab md-primary md-button md-ink-ripple" type="button" ng-transclude="" aria-label="Use Android">
+        <md-icon md-svg-src="img/icons/android.svg" class="ng-scope ng-isolate-scope" aria-hidden="true"></md-icon>
+        <div class="md-ripple-container"></div>
+    </button>
+
+    <!--<uib-carousel>-->
+        <!--<uib-slide>-->
+            <!--<img src="http://lorempixel.com/400/200/" alt=""/>-->
+        <!--</uib-slide>-->
+        <!--<uib-slide>-->
+            <!--<img src="http://lorempixel.com/400/200/" alt=""/>-->
+        <!--</uib-slide>-->
+        <!--<uib-slide>-->
+            <!--<img src="http://lorempixel.com/400/200/" alt=""/>-->
+        <!--</uib-slide>-->
+    <!--</uib-carousel>-->
 </div>

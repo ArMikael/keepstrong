@@ -1,6 +1,40 @@
 .container {
-  background-color: gold;
   padding: 20px; }
+
+.form-header {
+  margin: 0 auto;
+  text-align: center;
+  color: #228B22; }
+
+.sign-in-form,
+.registration-form {
+  width: 320px;
+  margin: 0 auto;
+  padding: 20px; }
+  .sign-in-form label,
+  .registration-form label {
+    color: #7C7C7C; }
+  .sign-in-form input,
+  .registration-form input {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+    height: 40px;
+    font-size: 22px;
+    padding: 0 10px; }
+  .sign-in-form input[type=submit],
+  .registration-form input[type=submit] {
+    background-color: #228B22;
+    color: white;
+    margin-bottom: 10px; }
+
+.create-account {
+  width: 320px;
+  margin: 0 auto;
+  text-align: center; }
+  .create-account a {
+    font-size: 18px;
+    color: #228B22; }
 
 .training-block {
   width: 400px;

@@ -7,8 +7,12 @@ console.log('Main.js');
 ;(function() {
     'use strict';
 
-    angular.module('keepStr', ['ngRoute'])
+    angular.module('kpStr', [
+            'ngRoute',
+            'ui.bootstrap'])
         .controller('MainCtrl', MainController)
+        .controller('LoginCtrl', LoginController)
+        .controller('RegCtrl', RegistrationController)
         .controller('ExerCtrl', ExerciseController)
         .controller('StatsCtrl', StatsController)
         .controller('AboutCtrl', AboutController)
@@ -18,26 +22,37 @@ console.log('Main.js');
         $routeProvider
             .when('/workout', {
                 controller: 'MainCtrl',
+                controllerAs: 'mc',
                 templateUrl: 'app/workout/workout.html'
             })
 
-            //.when('/workout', {
-            //    controller: 'WorkoutCtrl',
-            //    templateUrl: 'app/workout/workout.html'
-            //})
+            .when('/login', {
+                controller: 'LoginCtrl',
+                controllerAs: 'lc',
+                templateUrl: 'app/login/login.html'
+            })
+
+            .when('/registration', {
+                controller: 'RegCtrl',
+                controllerAs: 'rc',
+                templateUrl: 'app/login/registration.html'
+            })
 
             .when('/exercises', {
                 controller: 'ExerCtrl',
+                controllerAs: 'ec',
                 templateUrl: 'app/exercises/exercises.html'
             })
 
             .when('/statistics', {
                 controller: 'StatsCtrl',
+                controllerAs: 'sc',
                 templateUrl: 'app/statistics/statistics.html'
             })
 
             .when('/about', {
                 controller: 'AboutCtrl',
+                controllerAs: 'ac',
                 templateUrl: 'app/about/about.html'
             })
 
@@ -53,10 +68,27 @@ console.log('Main.js');
         s.run = 'Go fast, lets run';
     }
 
+    // $ngInject
+    function LoginController($rootScope) {
+        var s = this;
+
+        $rootScope.currentPage = 'login';
+        s.message = 'Please, login.';
+    }
+
+    // $ngInject
+    function RegistrationController($rootScope) {
+        var s = this;
+
+        $rootScope.currentPage = 'registration';
+        s.message = 'Please, register';
+    }
+
 
     // @ngInject
     function ExerciseController($rootScope) {
         var s = this;
+
         s.message = 'Exercises page!';
         $rootScope.currentPage = 'exercises';
     }
