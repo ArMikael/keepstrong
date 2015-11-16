@@ -132,19 +132,34 @@ function ExercisesController() {
         .filter('toLowerCase', toLowerCase);
 
 
+    //function StatsFactory($http) {
+    //    var dataFactory = {};
+    //
+    //    dataFactory.getData = function() {
+    //        return $http.get('app/statistics/persons.json');
+    //    }
+    //
+    //    return dataFactory;
+    //}
+    //
+
     function StatsFactory($http) {
         var dataFactory = {};
 
         dataFactory.getData = function() {
-            return $http.get('app/statistics/persons.json');
+            $http.get('app/statistics/persons.json')
+                .success(function(data) {
+                    return data;
+            });
         }
 
         return dataFactory;
+
     }
     StatsFactory.$inject = ["$http"];
 
 
-    
+
     /**
      * Stats Controller
      */
@@ -156,13 +171,20 @@ function ExercisesController() {
         $rootScope.currentPage = 'statistics';
         sc.message = 'Statistics page!';
 
-        StatsFactory.getData()
-            .success(function(data){
-                sc.persons = data;
-            })
-            .error(function (error) {
-                sc.status = 'Unable to load customer data: ' + error.message;
-            });
+        //sc.persons = StatsFactory;
+
+        sc.persons = StatsFactory.getData();
+
+        console.log(sc.persons);
+
+
+        //StatsFactory.getData()
+        //    .success(function(data){
+        //        sc.persons = data;
+        //    })
+        //    .error(function (error) {
+        //        sc.status = 'Unable to load customer data: ' + error.message;
+        //    });
     }
     StatsController.$inject = ["$rootScope", "StatsFactory"];
 
@@ -190,7 +212,5 @@ function ExercisesController() {
             return filtered;
         }
     }
-
-
 
 })();

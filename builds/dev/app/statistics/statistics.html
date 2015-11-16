@@ -5,6 +5,8 @@
     <button class="primary-btn">Check statistics</button>
     <br/><br/>
 
+    <div>{{sc.persons}}</div>
+
     <ul>
         <li ng-repeat="person in sc.persons">{{person.name | toLowerCase }} - {{person.age}} years</li>
     </ul>
