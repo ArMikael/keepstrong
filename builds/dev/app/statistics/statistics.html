@@ -3,12 +3,13 @@
     <p>Please check your results for the last month.</p>
     <p>{{sc.message}}</p>
     <button class="primary-btn">Check statistics</button>
-
-    <p>Good Morning MISHKA!</p>
-    <pre>{{sc.persons | json }}</pre>
-
+    <br/><br/>
 
     <ul>
-        <li ng-repeat="person in sc.persons">{{person.name | toLowerCase }}</li>
+        <li ng-repeat="person in sc.persons">{{person.name | toLowerCase }} - {{person.age}} years</li>
     </ul>
+
+    <pre>{{sc.persons | json }}</pre>
+    <strong>{{sc.status}}</strong>
+
 </div>

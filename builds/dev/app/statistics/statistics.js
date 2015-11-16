@@ -8,32 +8,42 @@
     angular.module('kpStr.stats', [
         'ngRoute'
     ])
-        .controller('StatsCtrl', StatsController)
         .config(StatsConfig)
+        .factory('StatsFactory', StatsFactory)
+        .controller('StatsCtrl', StatsController)
         .filter('toLowerCase', toLowerCase);
 
+
+    function StatsFactory($http) {
+        var dataFactory = {};
+
+        dataFactory.getData = function() {
+            return $http.get('app/statistics/persons.json');
+        }
+
+        return dataFactory;
+    }
+
+
+    
     /**
      * Stats Controller
      */
 
     // @ngInject
-    function StatsController($rootScope, $http) {
-        var s = this;
+    function StatsController($rootScope, StatsFactory) {
+        var sc = this;
 
         $rootScope.currentPage = 'statistics';
-        s.message = 'Statistics page!';
+        sc.message = 'Statistics page!';
 
-        $http.get('app/statistics/persons.json')
-            .success(function(data) {
-                s.persons = data;
-                console.log(data);
+        StatsFactory.getData()
+            .success(function(data){
+                sc.persons = data;
             })
-
-            .error(function (reason) {
-                console.log(reason);
+            .error(function (error) {
+                sc.status = 'Unable to load customer data: ' + error.message;
             });
-
-
     }
 
 
@@ -47,10 +57,14 @@
             });
     }
 
+
+
+    /* Custom Filter */
+
     // @ngInject
     function toLowerCase() {
         return function(text) {
-            var filtered = text.toLocaleLowerCase();
+            var filtered = text.toLowerCase();
 
             return filtered;
         }
