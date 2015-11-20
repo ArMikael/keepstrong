@@ -132,32 +132,35 @@ function ExercisesController() {
         .filter('toLowerCase', toLowerCase);
 
 
-    //function StatsFactory($http) {
-    //    var dataFactory = {};
-    //
-    //    dataFactory.getData = function() {
-    //        return $http.get('app/statistics/persons.json');
-    //    }
-    //
-    //    return dataFactory;
-    //}
-    //
-
     function StatsFactory($http) {
         var dataFactory = {};
 
-        dataFactory.getData = function() {
-            $http.get('app/statistics/persons.json')
-                .success(function(data) {
-                    return data;
-            });
-        }
+        console.log('factory');
+        dataFactory.getData = function(url) {
+            return $http.get(url);
+        };
 
         return dataFactory;
-
     }
     StatsFactory.$inject = ["$http"];
 
+
+    //function StatsFactory($http) {
+    //    var dataFactory = {
+    //        data: {}
+    //    };
+    //
+    //    dataFactory.getData = function() {
+    //        return $http.get('app/statistics/persons.json')
+    //            .then(function(response) {
+    //                console.log('Factory data: ', response.data);
+    //                dataFactory.data = response.data;
+    //            });
+    //    };
+    //
+    //    return dataFactory;
+    //
+    //}
 
 
     /**
@@ -171,20 +174,19 @@ function ExercisesController() {
         $rootScope.currentPage = 'statistics';
         sc.message = 'Statistics page!';
 
-        //sc.persons = StatsFactory;
+        //StatsFactory.getData();
+        //console.log('dada', StatsFactory.data);
+        //sc.persons = StatsFactory.data;
 
-        sc.persons = StatsFactory.getData();
+        //sc.persons = StatsFactory.getData();
 
-        console.log(sc.persons);
+        StatsFactory.getData('app/statistics/persons.json')
+            .then(function(response) {
+                console.log(response.data);
+                sc.persons = response.data;
+        });
 
-
-        //StatsFactory.getData()
-        //    .success(function(data){
-        //        sc.persons = data;
-        //    })
-        //    .error(function (error) {
-        //        sc.status = 'Unable to load customer data: ' + error.message;
-        //    });
+        console.log('sc.persons', sc.persons);
     }
     StatsController.$inject = ["$rootScope", "StatsFactory"];
 
