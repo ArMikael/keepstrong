@@ -8,7 +8,9 @@
     <div>{{sc.persons}}</div>
 
     <ul>
-        <li ng-repeat="person in sc.persons">{{person.name | toLowerCase }} - {{person.age}} years</li>
+        <li ng-repeat="person in sc.persons">Name: {{person.name | toLowerCase }} - {{person.age}} years
+            <strong>{{ person.registered | timeFromNow }}</strong>
+        </li>
     </ul>
 
     <pre>{{sc.persons | json }}</pre>

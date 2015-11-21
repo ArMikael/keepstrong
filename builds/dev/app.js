@@ -129,7 +129,8 @@ function ExercisesController() {
         .config(StatsConfig)
         .factory('StatsFactory', StatsFactory)
         .controller('StatsCtrl', StatsController)
-        .filter('toLowerCase', toLowerCase);
+        .filter('toLowerCase', toLowerCase)
+        .filter('timeFromNow', timeFromNow);
 
 
     function StatsFactory($http) {
@@ -204,7 +205,7 @@ function ExercisesController() {
 
 
 
-    /* Custom Filter */
+    /* Custom Filters */
 
     // @ngInject
     function toLowerCase() {
@@ -214,5 +215,66 @@ function ExercisesController() {
             return filtered;
         }
     }
+
+
+    // @ngInject
+    function timeFromNow() {
+        return function(date) {
+            var currentTime = Date.now(),
+                timeDiff = currentTime - Date.parse(date),
+                filteredDate;
+
+            // Time variables
+            var seconds = Math.round(timeDiff) / 1000,
+                minutes = Math.round(seconds) / 60,
+                hours = Math.round(minutes) / 60,
+                days = Math.round(hours) / 24,
+                months = Math.round(days) / 30,
+                years = Math.round(days) / 365;
+
+            console.log('registered', date);
+            console.log('currentTime', currentTime);
+            console.log('timeDiff', timeDiff);
+
+            var timeStrings = {
+                seconds: 'Less Than a Minute Ago',
+                minute: 'About a Minute Ago',
+                minutes: ' Minutes Ago',
+                hour: 'About an Hour Ago',
+                hours: ' Hours Ago',
+                day: ' a Day Ago',
+                days: ' Days Ago',
+                month: ' About a Month Ago',
+                months: ' Months Ago',
+                year: ' About a Year Ago',
+                years: ' Years Ago'
+            };
+
+
+            //filteredDate = timeStrings.seconds ||
+            //    minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
+            //    minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
+            //    hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
+            //    hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
+            //    days == 1 ? timeStrings.day : hours + timeStrings.hours ||
+            //    days > 1 ? days + timeStrings.days : timeStrings.day ||
+            //    months == 1 ? timeStrings.month : days + timeStrings.days ||
+            //    months > 1 ? months + timeStrings.months : timeStrings.month;
+
+            filteredDate =
+                months > 1 ? months + timeStrings.months : timeStrings.month ||
+                months == 1 ? timeStrings.month : days + timeStrings.days ||
+                days > 1 ? days + timeStrings.days : timeStrings.day ||
+                days == 1 ? timeStrings.day : hours + timeStrings.hours ||
+                hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
+                hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
+                minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
+                minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
+                timeStrings.seconds;
+
+            return filteredDate;
+        }
+    }
+
 
 })();

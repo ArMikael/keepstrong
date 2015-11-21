@@ -5,7 +5,8 @@
     "age": 22,
     "name": "Lorie Tanner",
     "gender": "female",
-    "greeting": "Hello, Lorie Tanner! You have 4 unread messages."
+    "greeting": "Hello, Lorie Tanner! You have 4 unread messages.",
+    "registered": "21 Jun 2014 09:12:05"
   },
   {
     "_id": "56472d2a23d28138af0a9e7f",
@@ -13,7 +14,8 @@
     "age": 31,
     "name": "Lowery Rollins",
     "gender": "male",
-    "greeting": "Hello, Lowery Rollins! You have 4 unread messages."
+    "greeting": "Hello, Lowery Rollins! You have 4 unread messages.",
+    "registered": "21 Nov 2015 09:12:05"
   },
   {
     "_id": "56472d2a5ddc7531fee96893",
@@ -21,7 +23,8 @@
     "age": 40,
     "name": "Kerri Walton",
     "gender": "female",
-    "greeting": "Hello, Kerri Walton! You have 5 unread messages."
+    "greeting": "Hello, Kerri Walton! You have 5 unread messages.",
+    "registered": "21 Nov 2015 14:31:05"
   },
   {
     "_id": "56472d2a8938598afa556233",
@@ -29,7 +32,8 @@
     "age": 30,
     "name": "Ochoa Downs",
     "gender": "male",
-    "greeting": "Hello, Ochoa Downs! You have 9 unread messages."
+    "greeting": "Hello, Ochoa Downs! You have 9 unread messages.",
+    "registered": "21 Jun 2015 09:12:05"
   },
   {
     "_id": "56472d2a6aabfe60ccb65026",
@@ -37,7 +41,8 @@
     "age": 22,
     "name": "Sims Lawrence",
     "gender": "male",
-    "greeting": "Hello, Sims Lawrence! You have 8 unread messages."
+    "greeting": "Hello, Sims Lawrence! You have 8 unread messages.",
+    "registered": "21 Jun 2013 09:12:05"
   },
   {
     "_id": "56472d2a224937fb3e0e112f",
@@ -45,6 +50,7 @@
     "age": 26,
     "name": "Rachael Foster",
     "gender": "female",
-    "greeting": "Hello, Rachael Foster! You have 9 unread messages."
+    "greeting": "Hello, Rachael Foster! You have 9 unread messages.",
+    "registered": "26 Aug 2015 10:12:05"
   }
 ]
