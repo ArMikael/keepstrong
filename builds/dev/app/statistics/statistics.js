@@ -11,8 +11,8 @@
         .config(StatsConfig)
         .factory('StatsFactory', StatsFactory)
         .controller('StatsCtrl', StatsController)
-        .filter('toLowerCase', toLowerCase)
-        .filter('timeFromNow', timeFromNow);
+        .filter('toLowerCase', toLowerCase);
+        //.filter('timeFromNow', timeFromNow);
 
 
     function StatsFactory($http) {

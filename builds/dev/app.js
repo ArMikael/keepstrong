@@ -129,8 +129,8 @@ function ExercisesController() {
         .config(StatsConfig)
         .factory('StatsFactory', StatsFactory)
         .controller('StatsCtrl', StatsController)
-        .filter('toLowerCase', toLowerCase)
-        .filter('timeFromNow', timeFromNow);
+        .filter('toLowerCase', toLowerCase);
+        //.filter('timeFromNow', timeFromNow);
 
 
     function StatsFactory($http) {
@@ -277,4 +277,40 @@ function ExercisesController() {
     }
 
 
+})();
+(function(){
+	'use strict';
+
+	angular.module('kpStr.users')
+		.controller('UsersCtrl', UsersController)
+
+    /**
+     * Users Controller
+     */
+
+	// @ngInject
+	function UsersController($rootScope, factoryUsers) {
+		var uc = this;
+		$rootScope.currentPage = 'users';
+
+		uc.users = [];
+
+		//factoryUsers.getUsers().then(_response){
+		//	uc.users = _response;
+		//}
+	}
+	UsersController.$inject = ["$rootScope", "factoryUsers"];
+
+})();
+(function(){
+	'use strict';
+
+	angular.module('kpStr')
+		.factory('factoryUsers', factoryUsers)
+
+
+	function factoryUsers() {
+
+	}
+	
 })();

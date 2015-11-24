@@ -1,7 +1,9 @@
 (function(){
 	'use strict';
 
-	angular.module('kpStr.users')
+	angular.module('kpStr.users', [
+		'kpStr.usersFactory'
+	])
 		.controller('UsersCtrl', UsersController)
 
     /**
@@ -9,15 +11,15 @@
      */
 
 	// @ngInject
-	function UsersController($rootScope, factoryUsers) {
+	function UsersController($rootScope, usersFactory) {
 		var uc = this;
 		$rootScope.currentPage = 'users';
 
 		uc.users = [];
 
-		factoryUsers.getUsers().then(_response) {
-			uc.users = _response;
-		}
+		//factoryUsers.getUsers().then(_response){
+		//	uc.users = _response;
+		//}
 	}
 
 })();

@@ -12,6 +12,7 @@ console.log('Main.js');
             'ui.bootstrap',
             'kpStr.stats'
     ])
+        .constant('FURL', 'https://scorching-fire-552.firebaseio.com/')
         .controller('MainCtrl', MainController)
         .controller('LoginCtrl', LoginController)
         .controller('RegCtrl', RegistrationController)
