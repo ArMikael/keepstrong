@@ -2,9 +2,9 @@
 	'use strict';
 
 	angular.module('kpStr.users', [
-			'ngRoute',
-			'kpStr.dbc'
-		])
+				'ngRoute',
+				'kpStr.dbc'
+			])
 		.config(usersConfig);
 
 		console.log('.users');

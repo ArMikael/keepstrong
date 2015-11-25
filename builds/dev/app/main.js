@@ -41,19 +41,13 @@
                 templateUrl: 'app/exercises/exercises.html'
             })
 
-            //.when('/users', {
-            //    controller: 'UsersCtrl',
-            //    controllerAs: 'uc',
-            //    templateUrl: 'app/users/users.html'
-            //})
-
             .when('/about', {
                 controller: 'AboutCtrl',
                 controllerAs: 'ac',
                 templateUrl: 'app/about/about.html'
-            });
+            })
 
-            //.otherwise({ redirectTo: '/workout' });
+            .otherwise({ redirectTo: '/workout' });
     }
 
     // @ngInject

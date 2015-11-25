@@ -1,9 +1,7 @@
 (function(){
 	'use strict';
 
-	angular.module('kpStr.users', [
-		'kpStr.dbc'
-		])
+	angular.module('kpStr.users')
 		.factory('usersFactory', usersFactory);
 
 
@@ -19,7 +17,7 @@
 
 
 		function getAllUsers() {
-			return $firebaseArray(usersRef).$loaded(function(_data){
+			return $firebaseArray(ref).$loaded(function(_data){
 				console.log('Data from Firebase', _data);
 
 				return _data;

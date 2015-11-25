@@ -1,9 +1,7 @@
 (function(){
 	'use strict';
 
-	angular.module('kpStr.users', [
-		'kpStr.usersFactory'
-		])
+	angular.module('kpStr.users')
 		.controller('UsersCtrl', UsersController);
 
     /**
@@ -19,9 +17,10 @@
 
 		uc.users = [];
 
-		//factoryUsers.getUsers().then(_response){
-		//	uc.users = _response;
-		//}
+		usersFactory.getAllUsers().then(function(_response){
+			console.log('response', _response)
+			uc.users = _response;
+		});
 	}
 
 })();
