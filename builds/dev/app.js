@@ -345,7 +345,22 @@ function ExercisesController() {
 		var uc = this;
 		$rootScope.currentPage = 'users';
 
-		console.log('$rootScope.currentPage', $rootScope.currentPage);
+		uc.editFormShow = false;
+
+		uc.editUser = function() {
+			uc.editFormShow = true;
+		};
+
+		uc.saveUser = function() {
+
+		};
+
+		uc.editableUser = {
+			name: null,
+			surname: null
+		};
+
+
 
 		uc.users = [];
 
@@ -353,6 +368,12 @@ function ExercisesController() {
 			console.log('response', _response)
 			uc.users = _response;
 		});
+
+		usersFactory.getUser(2).then(function(_response){
+			console.log('getUser response', _response);
+
+			uc.user = _response;
+		})
 	}
 	UsersController.$inject = ["$rootScope", "usersFactory"];
 
@@ -371,24 +392,29 @@ function ExercisesController() {
 		var users = null;
 
 		var service = {
-			getAllUsers: getAllUsers
+			getAllUsers: getAllUsers,
+			getUser: getUser
 		};
 
 
 		function getAllUsers() {
 			return $firebaseArray(ref).$loaded(function(_data){
-				console.log('Data from Firebase', _data);
+				console.log('All Users from Firebase', _data);
 
 				return _data;
 			});
 		}
 
-			// service.getAllUsers = function() {
-			// 	return $firebaseArray(usersRef).$loaded(function(_data){
-			// 		console.log('Data from Firebase', _data);
 
-			// 		return _data;
-			// 	});
+		function getUser(id) {
+			console.log('ID', id);
+			return $firebaseArray(ref.child(id)).$loaded(function(_data){
+				console.log('User from Firebase', _data);
+
+				return _data;
+			});
+		}
+
 
 
 			//var deferred = $q.defer();

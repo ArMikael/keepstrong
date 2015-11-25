@@ -12,24 +12,29 @@
 		var users = null;
 
 		var service = {
-			getAllUsers: getAllUsers
+			getAllUsers: getAllUsers,
+			getUser: getUser
 		};
 
 
 		function getAllUsers() {
 			return $firebaseArray(ref).$loaded(function(_data){
-				console.log('Data from Firebase', _data);
+				console.log('All Users from Firebase', _data);
 
 				return _data;
 			});
 		}
 
-			// service.getAllUsers = function() {
-			// 	return $firebaseArray(usersRef).$loaded(function(_data){
-			// 		console.log('Data from Firebase', _data);
 
-			// 		return _data;
-			// 	});
+		function getUser(id) {
+			console.log('ID', id);
+			return $firebaseArray(ref.child(id)).$loaded(function(_data){
+				console.log('User from Firebase', _data);
+
+				return _data;
+			});
+		}
+
 
 
 			//var deferred = $q.defer();

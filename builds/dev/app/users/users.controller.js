@@ -13,7 +13,22 @@
 		var uc = this;
 		$rootScope.currentPage = 'users';
 
-		console.log('$rootScope.currentPage', $rootScope.currentPage);
+		uc.editFormShow = false;
+
+		uc.editUser = function() {
+			uc.editFormShow = true;
+		};
+
+		uc.saveUser = function() {
+
+		};
+
+		uc.editableUser = {
+			name: null,
+			surname: null
+		};
+
+
 
 		uc.users = [];
 
@@ -21,6 +36,12 @@
 			console.log('response', _response)
 			uc.users = _response;
 		});
+
+		usersFactory.getUser(2).then(function(_response){
+			console.log('getUser response', _response);
+
+			uc.user = _response;
+		})
 	}
 
 })();
