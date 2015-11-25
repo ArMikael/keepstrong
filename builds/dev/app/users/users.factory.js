@@ -1,35 +1,43 @@
 (function(){
 	'use strict';
 
-	angular.module('kpStr.usersFactory', [
+	angular.module('kpStr.users', [
 		'kpStr.dbc'
-	])
-		.factory('usersFactory', usersFactory)
+		])
+		.factory('usersFactory', usersFactory);
 
 
 	// @ngInject
 	function usersFactory($q, $http, dbc, $firebaseArray, $firebaseObject) {
-		var obj = {};
 		var ref = dbc.getRef();
 		var usersRef = ref.child('users');
-
 		var users = null;
 
-		obj.getAllUsers = function() {
+		var service = {
+			getAllUsers: getAllUsers
+		};
+
+
+		function getAllUsers() {
 			return $firebaseArray(usersRef).$loaded(function(_data){
 				console.log('Data from Firebase', _data);
 
 				return _data;
 			});
+		}
 
+			// service.getAllUsers = function() {
+			// 	return $firebaseArray(usersRef).$loaded(function(_data){
+			// 		console.log('Data from Firebase', _data);
 
+			// 		return _data;
+			// 	});
 
 
 			//var deferred = $q.defer();
 			//return deferred.promise;
-		};
 
-		return obj;
+		return service;
 	}
 	
 })();

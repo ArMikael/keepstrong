@@ -1,17 +1,13 @@
-/**
- * Created by michaeltreser on 11/11/15.
- */
-
-console.log('Main.js');
-
 ;(function() {
     'use strict';
 
     angular.module('kpStr', [
             'ngRoute',
             'ui.bootstrap',
-            'kpStr.stats'
+            'kpStr.stats',
+            'kpStr.users'
     ])
+        .constant('FURL', 'https://scorching-fire-552.firebaseio.com/')
         .controller('MainCtrl', MainController)
         .controller('LoginCtrl', LoginController)
         .controller('RegCtrl', RegistrationController)
@@ -45,13 +41,19 @@ console.log('Main.js');
                 templateUrl: 'app/exercises/exercises.html'
             })
 
+            //.when('/users', {
+            //    controller: 'UsersCtrl',
+            //    controllerAs: 'uc',
+            //    templateUrl: 'app/users/users.html'
+            //})
+
             .when('/about', {
                 controller: 'AboutCtrl',
                 controllerAs: 'ac',
                 templateUrl: 'app/about/about.html'
-            })
+            });
 
-            .otherwise({ redirectTo: '/workout' });
+            //.otherwise({ redirectTo: '/workout' });
     }
     MainConfig.$inject = ["$routeProvider"];
 
@@ -116,6 +118,134 @@ function ExercisesController() {
 
     s.message = "Let's start with some exercises!";
 };
+(function () {
+    'use strict';
+
+    // Data Base Connection to Firebase
+    angular.module('kpStr.dbc', [
+        'firebase',
+    ])
+        .factory('dbc', dbcFactory)
+
+    // @ngInject
+    function dbcFactory(FURL) {
+        var ref = new Firebase(FURL);
+
+        var service = {
+            getRef: getRef
+        };
+
+        // Return reference to the firebase db
+        function getRef() {
+            return ref;
+        }
+
+        // service.getRef = function(){
+        //     return ref;
+        // };
+
+        return service;
+    }
+    dbcFactory.$inject = ["FURL"];
+
+})();
+;(function(){
+	'use strict';
+
+	angular.module('kpStr.users', [
+			'ngRoute',
+			'kpStr.dbc'
+		])
+		.config(usersConfig);
+
+		console.log('.users');
+
+		// @ngInject
+		function usersConfig($routeProvider) {
+			console.log('kpStr.users');
+
+			$routeProvider
+				.when('/users', {
+					controller: 'UsersCtrl',
+					controllerAs: 'uc',
+					templateUrl: 'app/users/users.html'
+				})
+		}
+		usersConfig.$inject = ["$routeProvider"];
+
+})();
+(function(){
+	'use strict';
+
+	angular.module('kpStr.users', [
+		'kpStr.usersFactory'
+		])
+		.controller('UsersCtrl', UsersController);
+
+    /**
+     * Users Controller
+     */
+
+	// @ngInject
+	function UsersController($rootScope, usersFactory) {
+		var uc = this;
+		$rootScope.currentPage = 'users';
+
+		console.log('$rootScope.currentPage', $rootScope.currentPage);
+
+		uc.users = [];
+
+		//factoryUsers.getUsers().then(_response){
+		//	uc.users = _response;
+		//}
+	}
+	UsersController.$inject = ["$rootScope", "usersFactory"];
+
+})();
+(function(){
+	'use strict';
+
+	angular.module('kpStr.users', [
+		'kpStr.dbc'
+		])
+		.factory('usersFactory', usersFactory);
+
+
+	// @ngInject
+	function usersFactory($q, $http, dbc, $firebaseArray, $firebaseObject) {
+		var ref = dbc.getRef();
+		var usersRef = ref.child('users');
+		var users = null;
+
+		var service = {
+			getAllUsers: getAllUsers
+		};
+
+
+		function getAllUsers() {
+			return $firebaseArray(usersRef).$loaded(function(_data){
+				console.log('Data from Firebase', _data);
+
+				return _data;
+			});
+		}
+
+			// service.getAllUsers = function() {
+			// 	return $firebaseArray(usersRef).$loaded(function(_data){
+			// 		console.log('Data from Firebase', _data);
+
+			// 		return _data;
+			// 	});
+
+
+			//var deferred = $q.defer();
+			//return deferred.promise;
+
+		return service;
+	}
+	usersFactory.$inject = ["$q", "$http", "dbc", "$firebaseArray", "$firebaseObject"];
+	
+})();
 /**
  * Created by michaeltreser on 11/14/15.
  */
@@ -277,40 +407,4 @@ function ExercisesController() {
     }
 
 
-})();
-(function(){
-	'use strict';
-
-	angular.module('kpStr.users')
-		.controller('UsersCtrl', UsersController)
-
-    /**
-     * Users Controller
-     */
-
-	// @ngInject
-	function UsersController($rootScope, factoryUsers) {
-		var uc = this;
-		$rootScope.currentPage = 'users';
-
-		uc.users = [];
-
-		//factoryUsers.getUsers().then(_response){
-		//	uc.users = _response;
-		//}
-	}
-	UsersController.$inject = ["$rootScope", "factoryUsers"];
-
-})();
-(function(){
-	'use strict';
-
-	angular.module('kpStr')
-		.factory('factoryUsers', factoryUsers)
-
-
-	function factoryUsers() {
-
-	}
-	
 })();

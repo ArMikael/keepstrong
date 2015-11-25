@@ -3,8 +3,8 @@
 
 	angular.module('kpStr.users', [
 		'kpStr.usersFactory'
-	])
-		.controller('UsersCtrl', UsersController)
+		])
+		.controller('UsersCtrl', UsersController);
 
     /**
      * Users Controller
@@ -14,6 +14,8 @@
 	function UsersController($rootScope, usersFactory) {
 		var uc = this;
 		$rootScope.currentPage = 'users';
+
+		console.log('$rootScope.currentPage', $rootScope.currentPage);
 
 		uc.users = [];
 

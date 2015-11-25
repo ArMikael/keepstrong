@@ -9,14 +9,22 @@
 
     // @ngInject
     function dbcFactory(FURL) {
-        var obj = {};
         var ref = new Firebase(FURL);
 
-        obj.getRef = function(){
-            return ref;
+        var service = {
+            getRef: getRef
         };
 
-        return obj;
+        // Return reference to the firebase db
+        function getRef() {
+            return ref;
+        }
+
+        // service.getRef = function(){
+        //     return ref;
+        // };
+
+        return service;
     }
 
 })();

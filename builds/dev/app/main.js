@@ -1,16 +1,11 @@
-/**
- * Created by michaeltreser on 11/11/15.
- */
-
-console.log('Main.js');
-
 ;(function() {
     'use strict';
 
     angular.module('kpStr', [
             'ngRoute',
             'ui.bootstrap',
-            'kpStr.stats'
+            'kpStr.stats',
+            'kpStr.users'
     ])
         .constant('FURL', 'https://scorching-fire-552.firebaseio.com/')
         .controller('MainCtrl', MainController)
@@ -46,13 +41,19 @@ console.log('Main.js');
                 templateUrl: 'app/exercises/exercises.html'
             })
 
+            //.when('/users', {
+            //    controller: 'UsersCtrl',
+            //    controllerAs: 'uc',
+            //    templateUrl: 'app/users/users.html'
+            //})
+
             .when('/about', {
                 controller: 'AboutCtrl',
                 controllerAs: 'ac',
                 templateUrl: 'app/about/about.html'
-            })
+            });
 
-            .otherwise({ redirectTo: '/workout' });
+            //.otherwise({ redirectTo: '/workout' });
     }
 
     // @ngInject
