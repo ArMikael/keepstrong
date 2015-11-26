@@ -42,9 +42,11 @@
 			console.log('Saving user in factory');
 
 			var user = $firebaseObject(ref.child(_user.id));
-			user.name = _user.name;
-			user.email = _user.email;
-			return user.$save();
+			return user.$loaded(function(_dbuser){
+				_dbuser.name = _user.name;
+				_dbuser.email = _user.email;
+				return _dbuser.$save();
+			});
 		}
 
 		function deleteUser (_id) {
@@ -55,7 +57,8 @@
 			return $firebaseArray(ref).$add({
 				name: '',
 				email: '',
-				registered: ''
+				registered: Firebase.ServerValue.TIMESTAMP,
+				last_visit: Firebase.ServerValue.TIMESTAMP
 			}).then(function(_ref){
 				return $firebaseObject(_ref).$loaded();
 			});
