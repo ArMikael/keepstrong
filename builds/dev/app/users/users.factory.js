@@ -13,7 +13,8 @@
 
 		var service = {
 			getAllUsers: getAllUsers,
-			getUser: getUser
+			getUser: getUser,
+			saveUser: saveUser
 		};
 
 
@@ -35,6 +36,12 @@
 			});
 		}
 
+
+		function saveUser(_user) {
+			console.log('Saving user in factory');
+
+			var user = $firebaseObject(ref.child(_user.id));
+		}
 
 
 			//var deferred = $q.defer();

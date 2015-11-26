@@ -5,13 +5,14 @@
 			   ng-model="uc.editableUser.name">
 	</div>
 	<div class="form-group">
-		<label for="inputSurname">Surname</label>
-		<input type="text" class="form-control" id="inputSurname" placeholder="Surname"
-			   ng-model="uc.editableUser.surname">
+		<label for="inputEmail">Email</label>
+		<input type="email" class="form-control" id="inputEmail" placeholder="Email"
+			   ng-model="uc.editableUser.email">
 	</div>
 	<button type="submit" ng-click="uc.saveUser()">Save</button>
 </form>
 
+<pre>{{uc.editableUser | json}}</pre>
 <pre>{{editUser | json}}</pre>
 
 <table class="table table-hover">
@@ -27,7 +28,8 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="user in uc.users">
+		<tr ng-repeat="user in uc.users"
+				ng-click="uc.editUser(user)">
 			<td>{{$index +1}}</td>
 			<td>{{user.name}}</td>
 			<td>{{user.email}}</td>

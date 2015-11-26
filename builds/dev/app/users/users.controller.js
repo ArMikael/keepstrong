@@ -15,17 +15,33 @@
 
 		uc.editFormShow = false;
 
-		uc.editUser = function() {
+		uc.editUser = function(_user) {
+			console.log(_user);
 			uc.editFormShow = true;
+			uc.editableUser = {
+				id: _user.$id,
+				name: _user.name,
+				email: _user.email
+			}
 		};
 
 		uc.saveUser = function() {
+			usersFactory.saveUser(uc.editableUser)
+				.then(function () {
+					uc.editFormShow = false;
 
+					uc.editableUser = {
+						id: null,
+						name: null,
+						email: null
+					};
+				});
 		};
 
 		uc.editableUser = {
+			id: null,
 			name: null,
-			surname: null
+			email: null
 		};
 
 

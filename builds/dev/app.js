@@ -132,18 +132,6 @@
 
 })();
 /**
- * Created by michaeltreser on 11/11/15.
- */
-
-angular.module('kpStr.exer', ['ngRoute'])
-    .controller('ExerCtrl', ExercisesController);
-
-function ExercisesController() {
-    var s = this;
-
-    s.message = "Let's start with some exercises!";
-};
-/**
  * Created by michaeltreser on 11/14/15.
  */
 
@@ -305,6 +293,18 @@ function ExercisesController() {
 
 
 })();
+/**
+ * Created by michaeltreser on 11/11/15.
+ */
+
+angular.module('kpStr.exer', ['ngRoute'])
+    .controller('ExerCtrl', ExercisesController);
+
+function ExercisesController() {
+    var s = this;
+
+    s.message = "Let's start with some exercises!";
+};
 ;(function(){
 	'use strict';
 
@@ -347,17 +347,33 @@ function ExercisesController() {
 
 		uc.editFormShow = false;
 
-		uc.editUser = function() {
+		uc.editUser = function(_user) {
+			console.log(_user);
 			uc.editFormShow = true;
+			uc.editableUser = {
+				id: _user.$id,
+				name: _user.name,
+				email: _user.email
+			}
 		};
 
 		uc.saveUser = function() {
+			usersFactory.saveUser(uc.editableUser)
+				.then(function () {
+					uc.editFormShow = false;
 
+					uc.editableUser = {
+						id: null,
+						name: null,
+						email: null
+					};
+				});
 		};
 
 		uc.editableUser = {
+			id: null,
 			name: null,
-			surname: null
+			email: null
 		};
 
 
@@ -393,7 +409,8 @@ function ExercisesController() {
 
 		var service = {
 			getAllUsers: getAllUsers,
-			getUser: getUser
+			getUser: getUser,
+			saveUser: saveUser
 		};
 
 
@@ -415,6 +432,12 @@ function ExercisesController() {
 			});
 		}
 
+
+		function saveUser(_user) {
+			console.log('Saving user in factory');
+
+			var user = $firebaseObject(ref.child(_user.id));
+		}
 
 
 			//var deferred = $q.defer();
