@@ -1,15 +1,17 @@
 <div class="wrapper">
     <div class="sign-in">
         <h2 class="form-header">Sign In</h2>
-        <form id="signInForm" class="sign-in-form">
+        <form id="signInForm" class="sign-in-form" name="signinForm">
 
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" />
+            <input type="email" name="email" id="email" placeholder="Email" required
+                   ng-model="rc.signinUser.email" />
 
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" />
+            <input type="password" name="password" id="password" placeholder="Password" required
+                   ng-model="rc.signinUser.password" />
 
-            <input type="submit"/>
+            <input type="submit" class="btn" ng-click="rc.signin()" />
 
             <a href="#" class="forgot-password">Forgot password?</a>
         </form>

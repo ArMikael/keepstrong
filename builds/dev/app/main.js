@@ -5,7 +5,8 @@
             'ngRoute',
             'ui.bootstrap',
             'kpStr.stats',
-            'kpStr.users'
+            'kpStr.users',
+            'kpStr.registration'
     ])
         .constant('FURL', 'https://scorching-fire-552.firebaseio.com/')
         .controller('MainCtrl', MainController)
@@ -21,18 +22,6 @@
                 controller: 'MainCtrl',
                 controllerAs: 'mc',
                 templateUrl: 'app/workout/workout.html'
-            })
-
-            .when('/login', {
-                controller: 'LoginCtrl',
-                controllerAs: 'lc',
-                templateUrl: 'app/login/login.html'
-            })
-
-            .when('/registration', {
-                controller: 'RegCtrl',
-                controllerAs: 'rc',
-                templateUrl: 'app/login/registration.html'
             })
 
             .when('/exercises', {
@@ -63,7 +52,7 @@
     function LoginController($rootScope) {
         var s = this;
 
-        $rootScope.currentPage = 'login';
+        $rootScope.currentPage = 'signin';
         s.message = 'Please, login.';
     }
 

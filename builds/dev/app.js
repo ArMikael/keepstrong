@@ -5,7 +5,8 @@
             'ngRoute',
             'ui.bootstrap',
             'kpStr.stats',
-            'kpStr.users'
+            'kpStr.users',
+            'kpStr.registration'
     ])
         .constant('FURL', 'https://scorching-fire-552.firebaseio.com/')
         .controller('MainCtrl', MainController)
@@ -21,18 +22,6 @@
                 controller: 'MainCtrl',
                 controllerAs: 'mc',
                 templateUrl: 'app/workout/workout.html'
-            })
-
-            .when('/login', {
-                controller: 'LoginCtrl',
-                controllerAs: 'lc',
-                templateUrl: 'app/login/login.html'
-            })
-
-            .when('/registration', {
-                controller: 'RegCtrl',
-                controllerAs: 'rc',
-                templateUrl: 'app/login/registration.html'
             })
 
             .when('/exercises', {
@@ -65,7 +54,7 @@
     function LoginController($rootScope) {
         var s = this;
 
-        $rootScope.currentPage = 'login';
+        $rootScope.currentPage = 'signin';
         s.message = 'Please, login.';
     }
     LoginController.$inject = ["$rootScope"];
@@ -143,6 +132,64 @@ function ExercisesController() {
 
     s.message = "Let's start with some exercises!";
 };
+
+(function(){
+    'use strict';
+
+    angular.module('kpStr.registration', [
+        'ngRoute',
+        'kpStr.dbc'
+    ])
+        .config(registrationConfig)
+        .controller('RegCtrl', RegistrationController)
+        .factory('regFactory', registrationFactory);
+
+
+    // @ngInject
+    function registrationConfig($routeProvider) {
+        $routeProvider
+            .when('/signin', {
+                controller: 'RegCtrl',
+                controllerAs: 'rc',
+                templateUrl: 'app/registration/signin.html'
+            })
+
+            .when('/registration', {
+                controller: 'RegCtrl',
+                controllerAs: 'rc',
+                templateUrl: 'app/registration/registration.html'
+            })
+    }
+    registrationConfig.$inject = ["$routeProvider"];
+
+    // @ngInject
+    function RegistrationController(regFactory) {
+        var rc = this;
+
+        rc.singinUser = {
+            email: null,
+            password: null
+        };
+
+        rc.singin = function() {
+            regFactory.signin(s.signinUser);
+        };
+
+        rc.signupUser = {
+            email: null,
+            password: null,
+            name: null
+        }
+    }
+    RegistrationController.$inject = ["regFactory"];
+
+    // @ngInject
+    function registrationFactory(dbc) {
+
+    }
+    registrationFactory.$inject = ["dbc"];
+
+})();
 /**
  * Created by michaeltreser on 11/14/15.
  */
