@@ -9,11 +9,16 @@
 		<input type="email" class="form-control" id="inputEmail" placeholder="Email"
 			   ng-model="uc.editableUser.email">
 	</div>
-	<button type="submit" ng-click="uc.saveUser()">Save</button>
+	<button type="submit" class="btn btn-success" ng-click="uc.saveUser()">Save</button>
+	<button type="submit" class="btn btn-default" ng-click="uc.cancelEditUser()">Cancel</button>
+	<button type="submit" class="btn btn-danger" ng-click="uc.removeUser()">Delete</button>
+
 </form>
 
 <pre>{{uc.editableUser | json}}</pre>
 <pre>{{editUser | json}}</pre>
+
+<button class="btn btn-primary" ng-click="uc.createUser()">Create user</button>
 
 <table class="table table-hover">
 	<thead>

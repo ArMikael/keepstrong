@@ -132,6 +132,18 @@
 
 })();
 /**
+ * Created by michaeltreser on 11/11/15.
+ */
+
+angular.module('kpStr.exer', ['ngRoute'])
+    .controller('ExerCtrl', ExercisesController);
+
+function ExercisesController() {
+    var s = this;
+
+    s.message = "Let's start with some exercises!";
+};
+/**
  * Created by michaeltreser on 11/14/15.
  */
 
@@ -293,18 +305,6 @@
 
 
 })();
-/**
- * Created by michaeltreser on 11/11/15.
- */
-
-angular.module('kpStr.exer', ['ngRoute'])
-    .controller('ExerCtrl', ExercisesController);
-
-function ExercisesController() {
-    var s = this;
-
-    s.message = "Let's start with some exercises!";
-};
 ;(function(){
 	'use strict';
 
@@ -360,24 +360,35 @@ function ExercisesController() {
 		uc.saveUser = function() {
 			usersFactory.saveUser(uc.editableUser)
 				.then(function () {
-					uc.editFormShow = false;
-
-					uc.editableUser = {
-						id: null,
-						name: null,
-						email: null
-					};
+					uc.cancelEditUser();
 				});
 		};
 
-		uc.editableUser = {
-			id: null,
-			name: null,
-			email: null
+		uc.removeUser = function() {
+			usersFactory.deleteUser(uc.editableUser.id)
+				.then(function(){
+					uc.cancelEditUser();
+				});
 		};
 
+		uc.cancelEditUser = function() {
+			uc.editFormShow = false;
 
+			uc.editableUser = {
+				id: null,
+				name: null,
+				email: null
+			};
+		};
 
+		uc.createUser = function() {
+			usersFactory.createNewUser()
+				.then(function(_d){
+					uc.editUser(_d);
+				});
+		};
+
+		uc.cancelEditUser();
 		uc.users = [];
 
 		usersFactory.getAllUsers().then(function(_response){
@@ -410,7 +421,9 @@ function ExercisesController() {
 		var service = {
 			getAllUsers: getAllUsers,
 			getUser: getUser,
-			saveUser: saveUser
+			saveUser: saveUser,
+			deleteUser: deleteUser,
+			createNewUser: createNewUser
 		};
 
 
@@ -432,11 +445,27 @@ function ExercisesController() {
 			});
 		}
 
-
 		function saveUser(_user) {
 			console.log('Saving user in factory');
 
 			var user = $firebaseObject(ref.child(_user.id));
+			user.name = _user.name;
+			user.email = _user.email;
+			return user.$save();
+		}
+
+		function deleteUser (_id) {
+			return $firebaseObject(ref.child(_id)).$remove();
+		}
+
+		function createNewUser() {
+			return $firebaseArray(ref).$add({
+				name: '',
+				email: '',
+				registered: ''
+			}).then(function(_ref){
+				return $firebaseObject(_ref).$loaded();
+			});
 		}
 
 

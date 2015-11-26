@@ -28,24 +28,35 @@
 		uc.saveUser = function() {
 			usersFactory.saveUser(uc.editableUser)
 				.then(function () {
-					uc.editFormShow = false;
-
-					uc.editableUser = {
-						id: null,
-						name: null,
-						email: null
-					};
+					uc.cancelEditUser();
 				});
 		};
 
-		uc.editableUser = {
-			id: null,
-			name: null,
-			email: null
+		uc.removeUser = function() {
+			usersFactory.deleteUser(uc.editableUser.id)
+				.then(function(){
+					uc.cancelEditUser();
+				});
 		};
 
+		uc.cancelEditUser = function() {
+			uc.editFormShow = false;
 
+			uc.editableUser = {
+				id: null,
+				name: null,
+				email: null
+			};
+		};
 
+		uc.createUser = function() {
+			usersFactory.createNewUser()
+				.then(function(_d){
+					uc.editUser(_d);
+				});
+		};
+
+		uc.cancelEditUser();
 		uc.users = [];
 
 		usersFactory.getAllUsers().then(function(_response){
