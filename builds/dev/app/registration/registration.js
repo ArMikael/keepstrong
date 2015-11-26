@@ -44,6 +44,10 @@
             password: null,
             name: null
         }
+
+        rc.singup = function() {
+          
+        };
     }
 
     // @ngInject

@@ -180,6 +180,10 @@ function ExercisesController() {
             password: null,
             name: null
         }
+
+        rc.singup = function() {
+          
+        };
     }
     RegistrationController.$inject = ["regFactory"];
 
