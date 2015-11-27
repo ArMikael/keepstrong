@@ -6,7 +6,7 @@
 
 
     // @ngInject
-    function registrationFactory(dbc) {
+    function registrationFactory(dbc, $rootScope) {
         var auth = dbc.get$Auth();
 
         console.log('regFactory');
@@ -18,10 +18,24 @@
 
 
         auth.$onAuth(function(authData){
+
             if (authData) { // Logged in
                 console.log('onAuth: Logged in!', authData);
+
+                usersFactory.getUser(authData.uid).then(function(_user) {
+                    $rootScope.currenUser = {
+                        loggedIn: true,
+                        fullname: _user.name
+                    };
+                });
+
             } else { // Logged out
                 console.log('onAuth: Logged out!', authData);
+
+                $rootScope.currenUser = {
+                    loggedIn: false,
+                    fullname: null
+                };
             }
         });
 

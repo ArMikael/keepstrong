@@ -3,7 +3,8 @@
 
     angular.module('kpStr.registration', [
         'ngRoute',
-        'kpStr.dbc'
+        'kpStr.dbc',
+        'kpStr.users'
     ])
         .config(registrationConfig);
 

@@ -137,7 +137,8 @@ function ExercisesController() {
 
     angular.module('kpStr.registration', [
         'ngRoute',
-        'kpStr.dbc'
+        'kpStr.dbc',
+        'kpStr.users'
     ])
         .config(registrationConfig);
 
@@ -215,7 +216,7 @@ function ExercisesController() {
 
 
     // @ngInject
-    function registrationFactory(dbc) {
+    function registrationFactory(dbc, $rootScope) {
         var auth = dbc.get$Auth();
 
         console.log('regFactory');
@@ -228,7 +229,14 @@ function ExercisesController() {
 
         auth.$onAuth(function(authData){
             if (authData) { // Logged in
+                usersFactory.getUser(authData.uid);
+
                 console.log('onAuth: Logged in!', authData);
+                $rootScope.currenUser = {
+                    id: authData.uid,
+                    fullname: 'aaa'
+                }
+
             } else { // Logged out
                 console.log('onAuth: Logged out!', authData);
             }
@@ -264,7 +272,7 @@ function ExercisesController() {
 
         return service;
     }
-    registrationFactory.$inject = ["dbc"];
+    registrationFactory.$inject = ["dbc", "$rootScope"];
 
 })();
 /**
@@ -560,9 +568,18 @@ function ExercisesController() {
 		}
 
 
+		//function getUser(id) {
+		//	console.log('ID', id);
+		//	return $firebaseArray(ref.child(id)).$loaded(function(_data){
+		//		console.log('User from Firebase', _data);
+        //
+		//		return _data;
+		//	});
+		//}
+
 		function getUser(id) {
 			console.log('ID', id);
-			return $firebaseArray(ref.child(id)).$loaded(function(_data){
+			return $firebaseObject(ref.child(id)).$loaded(function(_data){
 				console.log('User from Firebase', _data);
 
 				return _data;

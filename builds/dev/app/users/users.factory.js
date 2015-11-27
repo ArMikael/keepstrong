@@ -29,9 +29,18 @@
 		}
 
 
+		//function getUser(id) {
+		//	console.log('ID', id);
+		//	return $firebaseArray(ref.child(id)).$loaded(function(_data){
+		//		console.log('User from Firebase', _data);
+        //
+		//		return _data;
+		//	});
+		//}
+
 		function getUser(id) {
 			console.log('ID', id);
-			return $firebaseArray(ref.child(id)).$loaded(function(_data){
+			return $firebaseObject(ref.child(id)).$loaded(function(_data){
 				console.log('User from Firebase', _data);
 
 				return _data;
