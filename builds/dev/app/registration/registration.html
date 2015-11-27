@@ -1,9 +1,9 @@
 <div class="wrapper">
     <div class="registration">
         <h2 class="form-header">Create Account</h2>
-        <form id="registrationForm" class="registration-form" name="registrationForm">
+        <form id="registrationForm" class="registration-form" >
             <label for="regName">Your Name and Surname</label>
-            <input type="text" name="email" id="regName" placeholder="Email" required
+            <input type="text" name="name" id="regName" placeholder="Name and Surname" required
                    ng-model="rc.regUser.name"/>
 
             <label for="regEmail">Your Email Address</label>
@@ -14,7 +14,9 @@
             <input type="password" name="password" id="regPassword" placeholder="Password" required
                    ng-model="rc.regUser.password"/>
 
-            <input type="submit" value="Create account" class="btn" ng-click="rc.signup()" />
+            <button class="" ng-click="rc.signup()">Create account</button>
+
+            <pre>{{rc.signinUser}}</pre>
 
         </form>
 

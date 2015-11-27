@@ -132,7 +132,6 @@ function ExercisesController() {
 
     s.message = "Let's start with some exercises!";
 };
-
 (function(){
     'use strict';
 
@@ -140,9 +139,8 @@ function ExercisesController() {
         'ngRoute',
         'kpStr.dbc'
     ])
-        .config(registrationConfig)
-        .controller('RegCtrl', RegistrationController)
-        .factory('regFactory', registrationFactory);
+        .config(registrationConfig);
+
 
 
     // @ngInject
@@ -162,34 +160,109 @@ function ExercisesController() {
     }
     registrationConfig.$inject = ["$routeProvider"];
 
+})();
+
+
+
+(function(){
+    'use strict';
+
+    angular.module('kpStr.registration')
+        .controller('RegCtrl', RegistrationController);
+
+
     // @ngInject
     function RegistrationController(regFactory) {
+        console.log('controller reg');
+
         var rc = this;
 
-        rc.singinUser = {
+        rc.signinUser = {
             email: null,
             password: null
         };
 
-        rc.singin = function() {
-            regFactory.signin(s.signinUser);
+        rc.signin = function() {
+            regFactory.signIn(s.signinUser)
+                .then(function(){
+
+                });
         };
 
         rc.signupUser = {
             email: null,
             password: null,
             name: null
-        }
+        };
 
-        rc.singup = function() {
-          
+        rc.signup = function() {
+            console.log('signup');
+            regFactory.signUp(s.signupUser)
+                .then(function(){
+
+                });
         };
     }
     RegistrationController.$inject = ["regFactory"];
 
+
+})();
+(function(){
+    'use strict';
+
+    angular.module('kpStr.registration')
+        .factory('regFactory', registrationFactory);
+
+
     // @ngInject
     function registrationFactory(dbc) {
+        var auth = dbc.get$Auth();
 
+        console.log('regFactory');
+
+        var service = {
+            signUp: signUp,
+            signIn: signIn
+        };
+
+
+        auth.$onAuth(function(authData){
+            if (authData) { // Logged in
+                console.log('onAuth: Logged in!', authData);
+            } else { // Logged out
+                console.log('onAuth: Logged out!', authData);
+            }
+        });
+
+        function signIn(_user) {
+            return auth.$authWithPassword(_user);
+        }
+
+
+        function signUp(_user) {
+            console.log('FACTORY-   SIGNUP')
+            return auth.$createUser({
+                email: _user.email,
+                password: _user.password
+            }).then(function(userData){
+                console.log('User ' + userData.uid + ' created successfuly!');
+                var userRef = dbc.getRef().child('users').child(userData.uid);
+
+                userRef.set({
+                    name: _user.name,
+                    email: _user.email,
+                    registered: Firebase.ServerValue.TIMESTAMP,
+                    last_visit: Firebase.ServerValue.TIMESTAMP
+                });
+
+                return auth.$authWithPassword({
+                    email: _user.email,
+                    password: _user.password
+                })
+            });
+        }
+
+        return service;
     }
     registrationFactory.$inject = ["dbc"];
 

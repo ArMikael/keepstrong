@@ -22,7 +22,8 @@
     color: #7C7C7C;
   }
 
-  input {
+  input,
+  button {
     display: block;
     width: 100%;
     margin-bottom: 20px;
@@ -31,10 +32,12 @@
     padding: 0 10px;
   }
 
-  input[type=submit] {
+  input[type=submit],
+  button {
     background-color: #228B22;
     color: white;
     margin-bottom: 10px;
+    border: none;
   }
 }
 
