@@ -8,7 +8,7 @@
             'kpStr.users',
             'kpStr.registration'
     ])
-        .constant('FURL', 'https://scorching-fire-552.firebaseio.com/')
+        .constant('FURL', 'https://keepstrong.firebaseio.com/')
         .controller('MainCtrl', MainController)
         .controller('LoginCtrl', LoginController)
         .controller('RegCtrl', RegistrationController)

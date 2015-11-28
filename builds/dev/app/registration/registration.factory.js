@@ -1,10 +1,6 @@
 (function(){
     'use strict';
 
-    angular.module('kpStr.registration')
-        .factory('regFactory', registrationFactory);
-
-
     // @ngInject
     function registrationFactory(dbc, $rootScope) {
         var auth = dbc.get$Auth();
@@ -15,6 +11,8 @@
             signUp: signUp,
             signIn: signIn
         };
+
+
 
 
         auth.$onAuth(function(authData){
@@ -69,5 +67,9 @@
 
         return service;
     }
+
+
+    angular.module('kpStr.registration')
+        .factory('regFactory', registrationFactory);
 
 })();

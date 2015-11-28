@@ -1,0 +1,9 @@
+{
+  "firebase": "keepstrong",
+  "public": "builds/dev",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ]
+}

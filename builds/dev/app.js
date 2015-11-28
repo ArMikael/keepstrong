@@ -8,7 +8,7 @@
             'kpStr.users',
             'kpStr.registration'
     ])
-        .constant('FURL', 'https://scorching-fire-552.firebaseio.com/')
+        .constant('FURL', 'https://keepstrong.firebaseio.com/')
         .controller('MainCtrl', MainController)
         .controller('LoginCtrl', LoginController)
         .controller('RegCtrl', RegistrationController)
@@ -211,10 +211,6 @@ function ExercisesController() {
 (function(){
     'use strict';
 
-    angular.module('kpStr.registration')
-        .factory('regFactory', registrationFactory);
-
-
     // @ngInject
     function registrationFactory(dbc, $rootScope) {
         var auth = dbc.get$Auth();
@@ -227,18 +223,27 @@ function ExercisesController() {
         };
 
 
-        auth.$onAuth(function(authData){
-            if (authData) { // Logged in
-                usersFactory.getUser(authData.uid);
 
+
+        auth.$onAuth(function(authData){
+
+            if (authData) { // Logged in
                 console.log('onAuth: Logged in!', authData);
-                $rootScope.currenUser = {
-                    id: authData.uid,
-                    fullname: 'aaa'
-                }
+
+                usersFactory.getUser(authData.uid).then(function(_user) {
+                    $rootScope.currenUser = {
+                        loggedIn: true,
+                        fullname: _user.name
+                    };
+                });
 
             } else { // Logged out
                 console.log('onAuth: Logged out!', authData);
+
+                $rootScope.currenUser = {
+                    loggedIn: false,
+                    fullname: null
+                };
             }
         });
 
@@ -273,6 +278,10 @@ function ExercisesController() {
         return service;
     }
     registrationFactory.$inject = ["dbc", "$rootScope"];
+
+
+    angular.module('kpStr.registration')
+        .factory('regFactory', registrationFactory);
 
 })();
 /**
