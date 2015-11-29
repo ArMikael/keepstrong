@@ -11,6 +11,8 @@
 
         var rc = this;
 
+        $rootScope.currentPage = 'signin';
+
         rc.signinUser = {
             email: null,
             password: null

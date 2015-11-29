@@ -1,12 +1,31 @@
-/**
- * Created by michaeltreser on 11/11/15.
- */
+(function() {
+    'use strict';
 
-angular.module('kpStr.exer', ['ngRoute'])
-    .controller('ExerCtrl', ExercisesController);
+    angular.module('kpStr.exercises', [])
+        .config(ExercisesConfig)
+        .controller('ExercisesCtrl', ExercisesController);
 
-function ExercisesController() {
-    var s = this;
 
-    s.message = "Let's start with some exercises!";
-};
+    // @ngInject
+    function ExercisesController() {
+        var ec = this;
+
+        $rootScope.currentPage = 'exercises';
+
+        ec.message = "Let's start with some exercises!";
+    }
+
+
+    // @ngInject
+    function ExercisesConfig($stateProvider) {
+        $stateProvider
+            .state('exercises', {
+                    url: '/exercises',
+                    controller: 'ExercisesCtrl',
+                    controllerAs: 'ec',
+                    templateUrl: 'app/exercises/exercises.html'
+                })
+    }
+
+})();
+

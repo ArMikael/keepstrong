@@ -2,24 +2,24 @@
     'use strict';
 
     angular.module('kpStr.registration', [
-        'ngRoute',
-        'kpStr.dbc',
-        'kpStr.users'
+        'kpStr.dbc'
     ])
         .config(registrationConfig);
 
 
 
     // @ngInject
-    function registrationConfig($routeProvider) {
-        $routeProvider
-            .when('/signin', {
+    function registrationConfig($stateProvider) {
+        $stateProvider
+            .state('signin', {
+                url: '/signin',
                 controller: 'RegCtrl',
                 controllerAs: 'rc',
                 templateUrl: 'app/registration/signin.html'
             })
 
-            .when('/registration', {
+            .state('registration', {
+                url: '/registration',
                 controller: 'RegCtrl',
                 controllerAs: 'rc',
                 templateUrl: 'app/registration/registration.html'

@@ -2,7 +2,6 @@
 	'use strict';
 
 	angular.module('kpStr.users', [
-				'ngRoute',
 				'kpStr.dbc'
 			])
 		.config(usersConfig);
@@ -10,11 +9,12 @@
 		console.log('.users');
 
 		// @ngInject
-		function usersConfig($routeProvider) {
+		function usersConfig($stateProvider) {
 			console.log('kpStr.users');
 
-			$routeProvider
-				.when('/users', {
+			$stateProvider
+				.state('users', {
+					url: '/users',
 					controller: 'UsersCtrl',
 					controllerAs: 'uc',
 					templateUrl: 'app/users/users.html'

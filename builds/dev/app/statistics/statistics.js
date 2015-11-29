@@ -5,9 +5,7 @@
 ;(function() {
     'use strict';
 
-    angular.module('kpStr.stats', [
-        'ngRoute'
-    ])
+    angular.module('kpStr.stats', [])
         .config(StatsConfig)
         .factory('StatsFactory', StatsFactory)
         .controller('StatsCtrl', StatsController)
@@ -73,9 +71,10 @@
 
 
     // @ngInject
-    function StatsConfig($routeProvider) {
-        $routeProvider
-            .when('/statistics', {
+    function StatsConfig($stateProvider) {
+        $stateProvider
+            .state('statistics', {
+                url: '/statistics',
                 controller: 'StatsCtrl',
                 controllerAs: 'sc',
                 templateUrl: 'app/statistics/statistics.html'

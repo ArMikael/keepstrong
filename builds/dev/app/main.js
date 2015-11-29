@@ -2,42 +2,38 @@
     'use strict';
 
     angular.module('kpStr', [
-            //'ngRoute',
             'ui.router',
             'ui.bootstrap',
             'kpStr.stats',
             'kpStr.users',
+            'kpStr.exercises',
             'kpStr.registration'
     ])
         .constant('FURL', 'https://keepstrong.firebaseio.com/')
+        .config(MainConfig)
         .controller('MainCtrl', MainController)
-        .controller('LoginCtrl', LoginController)
-        .controller('RegCtrl', RegistrationController)
-        .controller('ExerCtrl', ExerciseController)
-        .controller('AboutCtrl', AboutController)
-        .config(MainConfig);
+        .controller('AboutCtrl', AboutController);
 
-    function MainConfig($routeProvider) {
-        $routeProvider
-            .when('/workout', {
+
+    // @ngInject
+    function MainConfig($urlRouterProvider, $stateProvider) {
+        $stateProvider
+            .state('workout', {
+                url: '/workout',
                 controller: 'MainCtrl',
                 controllerAs: 'mc',
                 templateUrl: 'app/workout/workout.html'
             })
 
-            .when('/exercises', {
-                controller: 'ExerCtrl',
-                controllerAs: 'ec',
-                templateUrl: 'app/exercises/exercises.html'
-            })
-
-            .when('/about', {
+            .state('about', {
+                url: '/about',
                 controller: 'AboutCtrl',
                 controllerAs: 'ac',
                 templateUrl: 'app/about/about.html'
-            })
+            });
 
-            .otherwise({ redirectTo: '/workout' });
+        $urlRouterProvider
+            .otherwise('/workout');
     }
 
     // @ngInject
@@ -50,28 +46,11 @@
     }
 
     // $ngInject
-    function LoginController($rootScope) {
-        var s = this;
-
-        $rootScope.currentPage = 'signin';
-        s.message = 'Please, login.';
-    }
-
-    // $ngInject
     function RegistrationController($rootScope) {
         var s = this;
 
         $rootScope.currentPage = 'registration';
         s.message = 'Please, register';
-    }
-
-
-    // @ngInject
-    function ExerciseController($rootScope) {
-        var s = this;
-
-        s.message = 'Exercises page!';
-        $rootScope.currentPage = 'exercises';
     }
 
 
