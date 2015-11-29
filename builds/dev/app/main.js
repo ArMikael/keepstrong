@@ -2,7 +2,8 @@
     'use strict';
 
     angular.module('kpStr', [
-            'ngRoute',
+            //'ngRoute',
+            'ui.router',
             'ui.bootstrap',
             'kpStr.stats',
             'kpStr.users',
