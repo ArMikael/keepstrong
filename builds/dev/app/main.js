@@ -16,7 +16,9 @@
 
 
     // @ngInject
-    function MainConfig($urlRouterProvider, $stateProvider) {
+    function MainConfig($urlRouterProvider, $stateProvider, $logProvider) {
+        $logProvider.debugEnabled(true);
+
         $stateProvider
             .state('workout', {
                 url: '/workout',
@@ -37,20 +39,13 @@
     }
 
     // @ngInject
-    function MainController($scope, $rootScope) {
+    function MainController($scope, $rootScope, $log) {
         var s = this;
 
-        $rootScope.currentPage = 'workout';
+        $log.debug('MainCTRL');
+
         s.message = 'Welcome to the KeepStrong App!';
         s.run = 'Go fast, lets run';
-    }
-
-    // $ngInject
-    function RegistrationController($rootScope) {
-        var s = this;
-
-        $rootScope.currentPage = 'registration';
-        s.message = 'Please, register';
     }
 
 

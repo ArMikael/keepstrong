@@ -16,7 +16,9 @@
 
 
     // @ngInject
-    function MainConfig($urlRouterProvider, $stateProvider) {
+    function MainConfig($urlRouterProvider, $stateProvider, $logProvider) {
+        $logProvider.debugEnabled(true);
+
         $stateProvider
             .state('workout', {
                 url: '/workout',
@@ -35,25 +37,18 @@
         $urlRouterProvider
             .otherwise('/workout');
     }
-    MainConfig.$inject = ["$urlRouterProvider", "$stateProvider"];
+    MainConfig.$inject = ["$urlRouterProvider", "$stateProvider", "$logProvider"];
 
     // @ngInject
-    function MainController($scope, $rootScope) {
+    function MainController($scope, $rootScope, $log) {
         var s = this;
 
-        $rootScope.currentPage = 'workout';
+        $log.debug('MainCTRL');
+
         s.message = 'Welcome to the KeepStrong App!';
         s.run = 'Go fast, lets run';
     }
-    MainController.$inject = ["$scope", "$rootScope"];
-
-    // $ngInject
-    function RegistrationController($rootScope) {
-        var s = this;
-
-        $rootScope.currentPage = 'registration';
-        s.message = 'Please, register';
-    }
+    MainController.$inject = ["$scope", "$rootScope", "$log"];
 
 
     // @ngInject
@@ -64,6 +59,37 @@
         $rootScope.currentPage = 'about';
     }
     AboutController.$inject = ["$rootScope"];
+
+})();
+(function () {
+    'use strict';
+
+    // Data Base Connection to Firebase
+    angular.module('kpStr.dbc', [
+        'firebase',
+    ])
+        .factory('dbc', dbcFactory)
+
+    // @ngInject
+    function dbcFactory(FURL) {
+        var ref = new Firebase(FURL);
+
+        var service = {
+            getRef: getRef
+        };
+
+        // Return reference to the firebase db
+        function getRef() {
+            return ref;
+        }
+
+        // service.getRef = function(){
+        //     return ref;
+        // };
+
+        return service;
+    }
+    dbcFactory.$inject = ["FURL"];
 
 })();
 (function() {
@@ -115,165 +141,158 @@
 })();
 
 
-/**
- * Created by michaeltreser on 11/14/15.
- */
-
-;(function() {
+(function(){
     'use strict';
 
-    angular.module('kpStr.stats', [])
-        .config(StatsConfig)
-        .factory('StatsFactory', StatsFactory)
-        .controller('StatsCtrl', StatsController)
-        .filter('toLowerCase', toLowerCase);
-        //.filter('timeFromNow', timeFromNow);
+    angular.module('kpStr.registration', [
+        'kpStr.dbc'
+    ])
+        .config(registrationConfig);
 
 
-    function StatsFactory($http) {
-        var dataFactory = {};
 
-        console.log('factory');
-        dataFactory.getData = function(url) {
-            return $http.get(url);
+    // @ngInject
+    function registrationConfig($stateProvider) {
+        $stateProvider
+            .state('signin', {
+                url: '/signin',
+                controller: 'RegCtrl',
+                controllerAs: 'rc',
+                templateUrl: 'app/registration/signin.html'
+            })
+
+            .state('registration', {
+                url: '/registration',
+                controller: 'RegCtrl',
+                controllerAs: 'rc',
+                templateUrl: 'app/registration/registration.html'
+            })
+    }
+    registrationConfig.$inject = ["$stateProvider"];
+
+})();
+
+
+
+(function(){
+    'use strict';
+
+    angular.module('kpStr.registration')
+        .controller('RegCtrl', RegistrationController);
+
+
+    // @ngInject
+    function RegistrationController(regFactory) {
+        console.log('controller reg');
+
+        var rc = this;
+
+        $rootScope.currentPage = 'signin';
+
+        rc.signinUser = {
+            email: null,
+            password: null
         };
 
-        return dataFactory;
+        rc.signin = function() {
+            regFactory.signIn(s.signinUser)
+                .then(function(){
+
+                });
+        };
+
+        rc.signupUser = {
+            email: null,
+            password: null,
+            name: null
+        };
+
+        rc.signup = function() {
+            console.log('signup');
+            regFactory.signUp(s.signupUser)
+                .then(function(){
+
+                });
+        };
     }
-    StatsFactory.$inject = ["$http"];
+    RegistrationController.$inject = ["regFactory"];
 
 
-    //function StatsFactory($http) {
-    //    var dataFactory = {
-    //        data: {}
-    //    };
-    //
-    //    dataFactory.getData = function() {
-    //        return $http.get('app/statistics/persons.json')
-    //            .then(function(response) {
-    //                console.log('Factory data: ', response.data);
-    //                dataFactory.data = response.data;
-    //            });
-    //    };
-    //
-    //    return dataFactory;
-    //
-    //}
-
-
-    /**
-     * Stats Controller
-     */
+})();
+(function(){
+    'use strict';
 
     // @ngInject
-    function StatsController($rootScope, StatsFactory) {
-        var sc = this;
+    function registrationFactory(dbc, $rootScope) {
+        var auth = dbc.get$Auth();
 
-        $rootScope.currentPage = 'statistics';
-        sc.message = 'Statistics page!';
+        console.log('regFactory');
 
-        //StatsFactory.getData();
-        //console.log('dada', StatsFactory.data);
-        //sc.persons = StatsFactory.data;
+        var service = {
+            signUp: signUp,
+            signIn: signIn
+        };
 
-        //sc.persons = StatsFactory.getData();
 
-        StatsFactory.getData('app/statistics/persons.json')
-            .then(function(response) {
-                console.log(response.data);
-                sc.persons = response.data;
+
+
+        auth.$onAuth(function(authData){
+
+            if (authData) { // Logged in
+                console.log('onAuth: Logged in!', authData);
+
+                usersFactory.getUser(authData.uid).then(function(_user) {
+                    $rootScope.currenUser = {
+                        loggedIn: true,
+                        fullname: _user.name
+                    };
+                });
+
+            } else { // Logged out
+                console.log('onAuth: Logged out!', authData);
+
+                $rootScope.currenUser = {
+                    loggedIn: false,
+                    fullname: null
+                };
+            }
         });
 
-        console.log('sc.persons', sc.persons);
-    }
-    StatsController.$inject = ["$rootScope", "StatsFactory"];
+        function signIn(_user) {
+            return auth.$authWithPassword(_user);
+        }
 
 
-    // @ngInject
-    function StatsConfig($stateProvider) {
-        $stateProvider
-            .state('statistics', {
-                url: '/statistics',
-                controller: 'StatsCtrl',
-                controllerAs: 'sc',
-                templateUrl: 'app/statistics/statistics.html'
+        function signUp(_user) {
+            console.log('FACTORY-   SIGNUP')
+            return auth.$createUser({
+                email: _user.email,
+                password: _user.password
+            }).then(function(userData){
+                console.log('User ' + userData.uid + ' created successfuly!');
+                var userRef = dbc.getRef().child('users').child(userData.uid);
+
+                userRef.set({
+                    name: _user.name,
+                    email: _user.email,
+                    registered: Firebase.ServerValue.TIMESTAMP,
+                    last_visit: Firebase.ServerValue.TIMESTAMP
+                });
+
+                return auth.$authWithPassword({
+                    email: _user.email,
+                    password: _user.password
+                })
             });
-    }
-    StatsConfig.$inject = ["$stateProvider"];
-
-
-
-    /* Custom Filters */
-
-    // @ngInject
-    function toLowerCase() {
-        return function(text) {
-            var filtered = text.toLowerCase();
-
-            return filtered;
         }
+
+        return service;
     }
+    registrationFactory.$inject = ["dbc", "$rootScope"];
 
 
-    // @ngInject
-    function timeFromNow() {
-        return function(date) {
-            var currentTime = Date.now(),
-                timeDiff = currentTime - Date.parse(date),
-                filteredDate;
-
-            // Time variables
-            var seconds = Math.round(timeDiff) / 1000,
-                minutes = Math.round(seconds) / 60,
-                hours = Math.round(minutes) / 60,
-                days = Math.round(hours) / 24,
-                months = Math.round(days) / 30,
-                years = Math.round(days) / 365;
-
-            console.log('registered', date);
-            console.log('currentTime', currentTime);
-            console.log('timeDiff', timeDiff);
-
-            var timeStrings = {
-                seconds: 'Less Than a Minute Ago',
-                minute: 'About a Minute Ago',
-                minutes: ' Minutes Ago',
-                hour: 'About an Hour Ago',
-                hours: ' Hours Ago',
-                day: ' a Day Ago',
-                days: ' Days Ago',
-                month: ' About a Month Ago',
-                months: ' Months Ago',
-                year: ' About a Year Ago',
-                years: ' Years Ago'
-            };
-
-
-            //filteredDate = timeStrings.seconds ||
-            //    minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
-            //    minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
-            //    hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
-            //    hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
-            //    days == 1 ? timeStrings.day : hours + timeStrings.hours ||
-            //    days > 1 ? days + timeStrings.days : timeStrings.day ||
-            //    months == 1 ? timeStrings.month : days + timeStrings.days ||
-            //    months > 1 ? months + timeStrings.months : timeStrings.month;
-
-            filteredDate =
-                months > 1 ? months + timeStrings.months : timeStrings.month ||
-                months == 1 ? timeStrings.month : days + timeStrings.days ||
-                days > 1 ? days + timeStrings.days : timeStrings.day ||
-                days == 1 ? timeStrings.day : hours + timeStrings.hours ||
-                hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
-                hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
-                minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
-                minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
-                timeStrings.seconds;
-
-            return filteredDate;
-        }
-    }
-
+    angular.module('kpStr.registration')
+        .factory('regFactory', registrationFactory);
 
 })();
 ;(function(){
@@ -460,188 +479,164 @@
 	usersFactory.$inject = ["$q", "$http", "dbc", "$firebaseArray", "$firebaseObject"];
 	
 })();
-(function () {
+/**
+ * Created by michaeltreser on 11/14/15.
+ */
+
+;(function() {
     'use strict';
 
-    // Data Base Connection to Firebase
-    angular.module('kpStr.dbc', [
-        'firebase',
-    ])
-        .factory('dbc', dbcFactory)
+    angular.module('kpStr.stats', [])
+        .config(StatsConfig)
+        .factory('StatsFactory', StatsFactory)
+        .controller('StatsCtrl', StatsController)
+        .filter('toLowerCase', toLowerCase);
+        //.filter('timeFromNow', timeFromNow);
 
-    // @ngInject
-    function dbcFactory(FURL) {
-        var ref = new Firebase(FURL);
 
-        var service = {
-            getRef: getRef
+    function StatsFactory($http) {
+        var dataFactory = {};
+
+        console.log('factory');
+        dataFactory.getData = function(url) {
+            return $http.get(url);
         };
 
-        // Return reference to the firebase db
-        function getRef() {
-            return ref;
-        }
-
-        // service.getRef = function(){
-        //     return ref;
-        // };
-
-        return service;
+        return dataFactory;
     }
-    dbcFactory.$inject = ["FURL"];
-
-})();
-(function(){
-    'use strict';
-
-    angular.module('kpStr.registration', [
-        'kpStr.dbc'
-    ])
-        .config(registrationConfig);
+    StatsFactory.$inject = ["$http"];
 
 
-
-    // @ngInject
-    function registrationConfig($stateProvider) {
-        $stateProvider
-            .state('signin', {
-                url: '/signin',
-                controller: 'RegCtrl',
-                controllerAs: 'rc',
-                templateUrl: 'app/registration/signin.html'
-            })
-
-            .state('registration', {
-                url: '/registration',
-                controller: 'RegCtrl',
-                controllerAs: 'rc',
-                templateUrl: 'app/registration/registration.html'
-            })
-    }
-    registrationConfig.$inject = ["$stateProvider"];
-
-})();
+    //function StatsFactory($http) {
+    //    var dataFactory = {
+    //        data: {}
+    //    };
+    //
+    //    dataFactory.getData = function() {
+    //        return $http.get('app/statistics/persons.json')
+    //            .then(function(response) {
+    //                console.log('Factory data: ', response.data);
+    //                dataFactory.data = response.data;
+    //            });
+    //    };
+    //
+    //    return dataFactory;
+    //
+    //}
 
 
-
-(function(){
-    'use strict';
-
-    angular.module('kpStr.registration')
-        .controller('RegCtrl', RegistrationController);
-
+    /**
+     * Stats Controller
+     */
 
     // @ngInject
-    function RegistrationController(regFactory) {
-        console.log('controller reg');
+    function StatsController($rootScope, StatsFactory) {
+        var sc = this;
 
-        var rc = this;
+        $rootScope.currentPage = 'statistics';
+        sc.message = 'Statistics page!';
 
-        $rootScope.currentPage = 'signin';
+        //StatsFactory.getData();
+        //console.log('dada', StatsFactory.data);
+        //sc.persons = StatsFactory.data;
 
-        rc.signinUser = {
-            email: null,
-            password: null
-        };
+        //sc.persons = StatsFactory.getData();
 
-        rc.signin = function() {
-            regFactory.signIn(s.signinUser)
-                .then(function(){
-
-                });
-        };
-
-        rc.signupUser = {
-            email: null,
-            password: null,
-            name: null
-        };
-
-        rc.signup = function() {
-            console.log('signup');
-            regFactory.signUp(s.signupUser)
-                .then(function(){
-
-                });
-        };
-    }
-    RegistrationController.$inject = ["regFactory"];
-
-
-})();
-(function(){
-    'use strict';
-
-    // @ngInject
-    function registrationFactory(dbc, $rootScope) {
-        var auth = dbc.get$Auth();
-
-        console.log('regFactory');
-
-        var service = {
-            signUp: signUp,
-            signIn: signIn
-        };
-
-
-
-
-        auth.$onAuth(function(authData){
-
-            if (authData) { // Logged in
-                console.log('onAuth: Logged in!', authData);
-
-                usersFactory.getUser(authData.uid).then(function(_user) {
-                    $rootScope.currenUser = {
-                        loggedIn: true,
-                        fullname: _user.name
-                    };
-                });
-
-            } else { // Logged out
-                console.log('onAuth: Logged out!', authData);
-
-                $rootScope.currenUser = {
-                    loggedIn: false,
-                    fullname: null
-                };
-            }
+        StatsFactory.getData('app/statistics/persons.json')
+            .then(function(response) {
+                console.log(response.data);
+                sc.persons = response.data;
         });
 
-        function signIn(_user) {
-            return auth.$authWithPassword(_user);
-        }
-
-
-        function signUp(_user) {
-            console.log('FACTORY-   SIGNUP')
-            return auth.$createUser({
-                email: _user.email,
-                password: _user.password
-            }).then(function(userData){
-                console.log('User ' + userData.uid + ' created successfuly!');
-                var userRef = dbc.getRef().child('users').child(userData.uid);
-
-                userRef.set({
-                    name: _user.name,
-                    email: _user.email,
-                    registered: Firebase.ServerValue.TIMESTAMP,
-                    last_visit: Firebase.ServerValue.TIMESTAMP
-                });
-
-                return auth.$authWithPassword({
-                    email: _user.email,
-                    password: _user.password
-                })
-            });
-        }
-
-        return service;
+        console.log('sc.persons', sc.persons);
     }
-    registrationFactory.$inject = ["dbc", "$rootScope"];
+    StatsController.$inject = ["$rootScope", "StatsFactory"];
 
 
-    angular.module('kpStr.registration')
-        .factory('regFactory', registrationFactory);
+    // @ngInject
+    function StatsConfig($stateProvider) {
+        $stateProvider
+            .state('statistics', {
+                url: '/statistics',
+                controller: 'StatsCtrl',
+                controllerAs: 'sc',
+                templateUrl: 'app/statistics/statistics.html'
+            });
+    }
+    StatsConfig.$inject = ["$stateProvider"];
+
+
+
+    /* Custom Filters */
+
+    // @ngInject
+    function toLowerCase() {
+        return function(text) {
+            var filtered = text.toLowerCase();
+
+            return filtered;
+        }
+    }
+
+
+    // @ngInject
+    function timeFromNow() {
+        return function(date) {
+            var currentTime = Date.now(),
+                timeDiff = currentTime - Date.parse(date),
+                filteredDate;
+
+            // Time variables
+            var seconds = Math.round(timeDiff) / 1000,
+                minutes = Math.round(seconds) / 60,
+                hours = Math.round(minutes) / 60,
+                days = Math.round(hours) / 24,
+                months = Math.round(days) / 30,
+                years = Math.round(days) / 365;
+
+            console.log('registered', date);
+            console.log('currentTime', currentTime);
+            console.log('timeDiff', timeDiff);
+
+            var timeStrings = {
+                seconds: 'Less Than a Minute Ago',
+                minute: 'About a Minute Ago',
+                minutes: ' Minutes Ago',
+                hour: 'About an Hour Ago',
+                hours: ' Hours Ago',
+                day: ' a Day Ago',
+                days: ' Days Ago',
+                month: ' About a Month Ago',
+                months: ' Months Ago',
+                year: ' About a Year Ago',
+                years: ' Years Ago'
+            };
+
+
+            //filteredDate = timeStrings.seconds ||
+            //    minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
+            //    minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
+            //    hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
+            //    hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
+            //    days == 1 ? timeStrings.day : hours + timeStrings.hours ||
+            //    days > 1 ? days + timeStrings.days : timeStrings.day ||
+            //    months == 1 ? timeStrings.month : days + timeStrings.days ||
+            //    months > 1 ? months + timeStrings.months : timeStrings.month;
+
+            filteredDate =
+                months > 1 ? months + timeStrings.months : timeStrings.month ||
+                months == 1 ? timeStrings.month : days + timeStrings.days ||
+                days > 1 ? days + timeStrings.days : timeStrings.day ||
+                days == 1 ? timeStrings.day : hours + timeStrings.hours ||
+                hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
+                hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
+                minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
+                minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
+                timeStrings.seconds;
+
+            return filteredDate;
+        }
+    }
+
 
 })();
