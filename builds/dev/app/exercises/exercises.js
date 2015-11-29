@@ -7,7 +7,7 @@
 
 
     // @ngInject
-    function ExercisesController() {
+    function ExercisesController($rootScope) {
         var ec = this;
 
         $rootScope.currentPage = 'exercises';
@@ -25,6 +25,21 @@
                     controllerAs: 'ec',
                     templateUrl: 'app/exercises/exercises.html'
                 })
+
+            .state('exercises.stretching', {
+                url: '/stretching',
+                templateUrl: 'app/exercises/exercises.stretching.html'
+            })
+
+            .state('exercises.endurance', {
+                url: '/endurance',
+                templateUrl: 'app/exercises/exercises.endurance.html'
+            })
+
+            .state('exercises.strength', {
+                url: '/strength',
+                templateUrl: 'app/exercises/exercises.strength.html'
+            })
     }
 
 })();
