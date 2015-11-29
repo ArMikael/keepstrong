@@ -11,6 +11,7 @@
     ])
         .constant('FURL', 'https://keepstrong.firebaseio.com/')
         .config(MainConfig)
+        .run(MainRun)
         .controller('MainCtrl', MainController)
         .controller('AboutCtrl', AboutController);
 
@@ -38,6 +39,16 @@
             .otherwise('/workout');
     }
 
+
+    // @ngInject
+    function MainRun($log, $rootScope, $state, $stateParams) {
+        $log.debug('MainRun');
+
+        $rootScope.$state = $state;
+        $rootScope.$stateParams = $stateParams;
+    }
+
+
     // @ngInject
     function MainController($scope, $rootScope, $log) {
         var s = this;
@@ -53,8 +64,7 @@
     function AboutController($rootScope) {
         var s = this;
 
-        s.message = 'Exercises page!';
-        $rootScope.currentPage = 'about';
+        s.message = 'About page!';
     }
 
 })();

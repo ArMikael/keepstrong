@@ -11,6 +11,7 @@
     ])
         .constant('FURL', 'https://keepstrong.firebaseio.com/')
         .config(MainConfig)
+        .run(MainRun)
         .controller('MainCtrl', MainController)
         .controller('AboutCtrl', AboutController);
 
@@ -39,6 +40,13 @@
     }
     MainConfig.$inject = ["$urlRouterProvider", "$stateProvider", "$logProvider"];
 
+
+    // @ngInject
+    function MainRun() {
+
+    }
+    
+
     // @ngInject
     function MainController($scope, $rootScope, $log) {
         var s = this;
@@ -55,8 +63,7 @@
     function AboutController($rootScope) {
         var s = this;
 
-        s.message = 'Exercises page!';
-        $rootScope.currentPage = 'about';
+        s.message = 'About page!';
     }
     AboutController.$inject = ["$rootScope"];
 
