@@ -1,9 +1,13 @@
 (function(){
     'use strict';
 
+    angular.module('kpStr.registration')
+        .factory('regFactory', registrationFactory);
+
+
     // @ngInject
     function registrationFactory(dbc, $rootScope) {
-        var auth = dbc.get$Auth();
+        var auth = dbc.getAuth();
 
         console.log('regFactory');
 
@@ -11,8 +15,6 @@
             signUp: signUp,
             signIn: signIn
         };
-
-
 
 
         auth.$onAuth(function(authData){
@@ -43,7 +45,7 @@
 
 
         function signUp(_user) {
-            console.log('FACTORY-   SIGNUP')
+            console.log('FACTORY-SIGNUP')
             return auth.$createUser({
                 email: _user.email,
                 password: _user.password
@@ -67,9 +69,5 @@
 
         return service;
     }
-
-
-    angular.module('kpStr.registration')
-        .factory('regFactory', registrationFactory);
 
 })();

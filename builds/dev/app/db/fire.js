@@ -3,7 +3,7 @@
 
     // Data Base Connection to Firebase
     angular.module('kpStr.dbc', [
-        'firebase',
+        'firebase'
     ])
         .factory('dbc', dbcFactory)
 
