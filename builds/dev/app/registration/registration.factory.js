@@ -45,15 +45,17 @@
 
 
         function signUp(_user) {
-            console.log('FACTORY-SIGNUP');
+            console.log('registrationFactory.signUp');
 
-            return auth.$createUser({
+            return auth.$createUser({   
                 email: _user.email,
                 password: _user.password
             })
                 .then(function(userData){
                 console.log('User ' + userData.uid + ' created successfully!');
                 var userRef = dbc.getRef().child('users').child(userData.uid);
+
+                    console.log('promise from dbc', userData);
 
                 // set() method will redefine object from the reference
                 userRef.set({
