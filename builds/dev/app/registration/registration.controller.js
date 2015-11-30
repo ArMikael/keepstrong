@@ -17,13 +17,14 @@
         };
 
         rc.signin = function() {
-            regFactory.signIn(s.signinUser)
+            regFactory.signIn(rc.signinUser)
                 .then(function(){
-
+                    // For example after authorisation forward user to specific page with $location.path()
                 });
         };
 
-        rc.signupUser = {
+
+        rc.regUser = {
             email: null,
             password: null,
             name: null
@@ -31,7 +32,7 @@
 
         rc.signup = function() {
             console.log('signup');
-            regFactory.signUp(s.signupUser)
+            regFactory.signUp(rc.regUser)
                 .then(function(){
 
                 });

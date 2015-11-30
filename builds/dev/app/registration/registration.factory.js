@@ -7,7 +7,7 @@
 
     // @ngInject
     function registrationFactory(dbc, $rootScope) {
-        var auth = dbc.getAuth();
+        var auth = dbc.get$Auth();
 
         console.log('regFactory');
 
@@ -45,14 +45,17 @@
 
 
         function signUp(_user) {
-            console.log('FACTORY-SIGNUP')
+            console.log('FACTORY-SIGNUP');
+
             return auth.$createUser({
                 email: _user.email,
                 password: _user.password
-            }).then(function(userData){
-                console.log('User ' + userData.uid + ' created successfuly!');
+            })
+                .then(function(userData){
+                console.log('User ' + userData.uid + ' created successfully!');
                 var userRef = dbc.getRef().child('users').child(userData.uid);
 
+                // set() method will redefine object from the reference
                 userRef.set({
                     name: _user.name,
                     email: _user.email,
@@ -63,7 +66,7 @@
                 return auth.$authWithPassword({
                     email: _user.email,
                     password: _user.password
-                })
+                });
             });
         }
 

@@ -42,10 +42,14 @@
 
 
     // @ngInject
-    function MainRun() {
+    function MainRun($log, $rootScope, $state, $stateParams) {
+        $log.debug('MainRun');
 
+        $rootScope.$state = $state;
+        $rootScope.$stateParams = $stateParams;
     }
-    
+    MainRun.$inject = ["$log", "$rootScope", "$state", "$stateParams"];
+
 
     // @ngInject
     function MainController($scope, $rootScope, $log) {
@@ -75,19 +79,33 @@
     angular.module('kpStr.dbc', [
         'firebase'
     ])
-        .factory('dbc', dbcFactory)
+        .factory('dbc', dbcFactory);
 
     // @ngInject
-    function dbcFactory(FURL) {
+    function dbcFactory(FURL, $firebaseAuth) {
         var ref = new Firebase(FURL);
+        var auth = $firebaseAuth(ref);
 
         var service = {
-            getRef: getRef
+            getRef: getRef,
+            getAuth: getAuth,
+            get$Auth: get$Auth
         };
+
 
         // Return reference to the firebase db
         function getRef() {
             return ref;
+        }
+
+        // Native method from Firebase (faster then Angular-fire method)
+        function getAuth() {
+            return ref.getAuth();
+        }
+
+        // Method from Angular-Fire
+        function get$Auth() {
+            return auth;
         }
 
         // service.getRef = function(){
@@ -96,7 +114,7 @@
 
         return service;
     }
-    dbcFactory.$inject = ["FURL"];
+    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
 
 })();
 (function() {
@@ -200,13 +218,14 @@
         };
 
         rc.signin = function() {
-            regFactory.signIn(s.signinUser)
+            regFactory.signIn(rc.signinUser)
                 .then(function(){
-
+                    // For example after authorisation forward user to specific page with $location.path()
                 });
         };
 
-        rc.signupUser = {
+
+        rc.regUser = {
             email: null,
             password: null,
             name: null
@@ -214,7 +233,7 @@
 
         rc.signup = function() {
             console.log('signup');
-            regFactory.signUp(s.signupUser)
+            regFactory.signUp(rc.regUser)
                 .then(function(){
 
                 });
@@ -233,7 +252,7 @@
 
     // @ngInject
     function registrationFactory(dbc, $rootScope) {
-        var auth = dbc.getAuth();
+        var auth = dbc.get$Auth();
 
         console.log('regFactory');
 
@@ -271,14 +290,17 @@
 
 
         function signUp(_user) {
-            console.log('FACTORY-SIGNUP')
+            console.log('FACTORY-SIGNUP');
+
             return auth.$createUser({
                 email: _user.email,
                 password: _user.password
-            }).then(function(userData){
-                console.log('User ' + userData.uid + ' created successfuly!');
+            })
+                .then(function(userData){
+                console.log('User ' + userData.uid + ' created successfully!');
                 var userRef = dbc.getRef().child('users').child(userData.uid);
 
+                // set() method will redefine object from the reference
                 userRef.set({
                     name: _user.name,
                     email: _user.email,
@@ -289,7 +311,7 @@
                 return auth.$authWithPassword({
                     email: _user.email,
                     password: _user.password
-                })
+                });
             });
         }
 
