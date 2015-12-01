@@ -25,14 +25,16 @@
                 url: '/workout',
                 controller: 'MainCtrl',
                 controllerAs: 'mc',
-                templateUrl: 'app/workout/workout.html'
+                templateUrl: 'app/workout/workout.html',
+                authenticate: true
             })
 
             .state('about', {
                 url: '/about',
                 controller: 'AboutCtrl',
                 controllerAs: 'ac',
-                templateUrl: 'app/about/about.html'
+                templateUrl: 'app/about/about.html',
+                authenticate: false
             });
 
         $urlRouterProvider
@@ -41,8 +43,22 @@
 
 
     // @ngInject
-    function MainRun($log, $rootScope, $state, $stateParams) {
+    function MainRun($log, $rootScope, $state, $stateParams, dbc) {
         $log.debug('MainRun');
+
+
+        $rootScope.$on('$stateChangeStart',
+            function(state, toState, toParams, fromState, fromParams){
+                console.log('StateChangeStart');
+
+                if (toState.authenticate && !dbc.isLoggedIn) {
+                    $state.transitionTo('signin');
+                    event.preventDefault();
+                } else if (!toState.authenticate ) {
+
+                }
+
+            });
 
         $rootScope.$state = $state;
         $rootScope.$stateParams = $stateParams;

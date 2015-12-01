@@ -25,14 +25,16 @@
                 url: '/workout',
                 controller: 'MainCtrl',
                 controllerAs: 'mc',
-                templateUrl: 'app/workout/workout.html'
+                templateUrl: 'app/workout/workout.html',
+                authenticate: true
             })
 
             .state('about', {
                 url: '/about',
                 controller: 'AboutCtrl',
                 controllerAs: 'ac',
-                templateUrl: 'app/about/about.html'
+                templateUrl: 'app/about/about.html',
+                authenticate: false
             });
 
         $urlRouterProvider
@@ -42,13 +44,27 @@
 
 
     // @ngInject
-    function MainRun($log, $rootScope, $state, $stateParams) {
+    function MainRun($log, $rootScope, $state, $stateParams, dbc) {
         $log.debug('MainRun');
+
+
+        $rootScope.$on('$stateChangeStart',
+            function(state, toState, toParams, fromState, fromParams){
+                console.log('StateChangeStart');
+
+                if (toState.authenticate && !dbc.isLoggedIn) {
+                    $state.transitionTo('signin');
+                    event.preventDefault();
+                } else if (!toState.authenticate ) {
+
+                }
+
+            });
 
         $rootScope.$state = $state;
         $rootScope.$stateParams = $stateParams;
     }
-    MainRun.$inject = ["$log", "$rootScope", "$state", "$stateParams"];
+    MainRun.$inject = ["$log", "$rootScope", "$state", "$stateParams", "dbc"];
 
 
     // @ngInject
@@ -89,7 +105,8 @@
         var service = {
             getRef: getRef,
             getAuth: getAuth,
-            get$Auth: get$Auth
+            get$Auth: get$Auth,
+            isLoggedIn: isLoggedIn
         };
 
 
@@ -106,6 +123,11 @@
         // Method from Angular-Fire
         function get$Auth() {
             return auth;
+        }
+
+        // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
+        function isLoggedIn() {
+            return ref.getAuth().$getAuth();
         }
 
         // service.getRef = function(){
@@ -143,22 +165,26 @@
                     url: '/exercises',
                     controller: 'ExercisesCtrl',
                     controllerAs: 'ec',
-                    templateUrl: 'app/exercises/exercises.html'
+                    templateUrl: 'app/exercises/exercises.html',
+                    authenticate: false
                 })
 
             .state('exercises.stretching', {
                 url: '/stretching',
-                templateUrl: 'app/exercises/exercises.stretching.html'
+                templateUrl: 'app/exercises/exercises.stretching.html',
+                authenticate: true
             })
 
             .state('exercises.endurance', {
                 url: '/endurance',
-                templateUrl: 'app/exercises/exercises.endurance.html'
+                templateUrl: 'app/exercises/exercises.endurance.html',
+                authenticate: true
             })
 
             .state('exercises.strength', {
                 url: '/strength',
-                templateUrl: 'app/exercises/exercises.strength.html'
+                templateUrl: 'app/exercises/exercises.strength.html',
+                authenticate: true
             })
     }
     ExercisesConfig.$inject = ["$stateProvider"];
@@ -183,14 +209,16 @@
                 url: '/signin',
                 controller: 'RegCtrl',
                 controllerAs: 'rc',
-                templateUrl: 'app/registration/signin.html'
+                templateUrl: 'app/registration/signin.html',
+                authenticate: false
             })
 
             .state('registration', {
                 url: '/registration',
                 controller: 'RegCtrl',
                 controllerAs: 'rc',
-                templateUrl: 'app/registration/registration.html'
+                templateUrl: 'app/registration/registration.html',
+                authenticate: false
             })
     }
     registrationConfig.$inject = ["$stateProvider"];
@@ -509,7 +537,8 @@
 					url: '/users',
 					controller: 'UsersCtrl',
 					controllerAs: 'uc',
-					templateUrl: 'app/users/users.html'
+					templateUrl: 'app/users/users.html',
+					authenticate: true
 				})
 		}
 		usersConfig.$inject = ["$stateProvider"];

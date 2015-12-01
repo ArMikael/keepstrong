@@ -6,9 +6,9 @@
 
 // Sign in and Registration
 .form-header {
-  margin: 0 auto;
-  text-align: center;
-  color: #228B22;
+    margin: 0 auto;
+    text-align: center;
+    color: #228B22;
 }
 
 .sign-in-form,
@@ -67,4 +67,24 @@
   padding: 20px;
 
   margin: 20px;
+}
+
+
+// Exercises Page
+.exercises-container {
+  margin: 40px 0;
+
+  h3 {
+    display: inline-block;
+    margin: 10px 0;
+  }
+
+  i {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+  }
 }

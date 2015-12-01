@@ -15,7 +15,8 @@
         var service = {
             getRef: getRef,
             getAuth: getAuth,
-            get$Auth: get$Auth
+            get$Auth: get$Auth,
+            isLoggedIn: isLoggedIn
         };
 
 
@@ -32,6 +33,11 @@
         // Method from Angular-Fire
         function get$Auth() {
             return auth;
+        }
+
+        // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
+        function isLoggedIn() {
+            return ref.getAuth().$getAuth();
         }
 
         // service.getRef = function(){

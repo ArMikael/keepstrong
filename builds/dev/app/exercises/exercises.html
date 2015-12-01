@@ -10,23 +10,29 @@
         <li>Бег</li>
     </ul>
 
-    <h3>Exercises types</h3>
-    <div class="row">
-        <a ui-sref="exercises.stretching"
-           ui-sref-active="btn-warning"
-           class="btn btn-success">Stretching</a>
-        <a ui-sref="exercises.endurance"
-           ui-sref-active="btn-warning"
-           class="btn btn-success">Endurance</a>
-        <a ui-sref="exercises.strength"
-           ui-sref-active="btn-warning"
-           class="btn btn-success">Strength</a>
+    <div class="exercises-container">
+        <i ng-class="{'bg-danger': $state.includes('exercises.strength'),
+                    'bg-success': $state.includes('exercises.endurance'),
+                    'bg-warning': $state.includes('exercises.stretching')}"></i>
+        <h3>Exercises types</h3>
+        <div class="row">
+            <a ui-sref="exercises.stretching"
+               ui-sref-active="btn-warning"
+               class="btn btn-success">Stretching</a>
+            <a ui-sref="exercises.endurance"
+               ui-sref-active="btn-warning"
+               class="btn btn-success">Endurance</a>
+            <a ui-sref="exercises.strength"
+               ui-sref-active="btn-warning"
+               class="btn btn-success">Strength</a>
+        </div>
+
+
+        <div class="row" ui-view></div>
     </div>
 
-    <div class="row" ui-view></div>
 
-    <br/>
-    <br/>
+
 
     <div class="col-md-10 col-lg-12">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. At aut ea exercitationem fugit iste iusto, nihil odit

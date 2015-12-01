@@ -15,14 +15,16 @@
                 url: '/signin',
                 controller: 'RegCtrl',
                 controllerAs: 'rc',
-                templateUrl: 'app/registration/signin.html'
+                templateUrl: 'app/registration/signin.html',
+                authenticate: false
             })
 
             .state('registration', {
                 url: '/registration',
                 controller: 'RegCtrl',
                 controllerAs: 'rc',
-                templateUrl: 'app/registration/registration.html'
+                templateUrl: 'app/registration/registration.html',
+                authenticate: false
             })
     }
 
