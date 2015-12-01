@@ -6,7 +6,7 @@
 
 
     // @ngInject
-    function registrationFactory(dbc, $rootScope) {
+    function registrationFactory(dbc, $rootScope, usersFactory) {
         var auth = dbc.get$Auth();
 
         console.log('regFactory');
@@ -17,13 +17,17 @@
         };
 
 
-        auth.$onAuth(function(authData){
+        $rootScope.logOut = function() {
+            auth.$unauth();
+        };
 
+
+        auth.$onAuth(function(authData){
             if (authData) { // Logged in
                 console.log('onAuth: Logged in!', authData);
 
                 usersFactory.getUser(authData.uid).then(function(_user) {
-                    $rootScope.currenUser = {
+                    $rootScope.currentUser = {
                         loggedIn: true,
                         fullname: _user.name
                     };
@@ -32,7 +36,7 @@
             } else { // Logged out
                 console.log('onAuth: Logged out!', authData);
 
-                $rootScope.currenUser = {
+                $rootScope.currentUser = {
                     loggedIn: false,
                     fullname: null
                 };
@@ -47,7 +51,7 @@
         function signUp(_user) {
             console.log('registrationFactory.signUp');
 
-            return auth.$createUser({   
+            return auth.$createUser({
                 email: _user.email,
                 password: _user.password
             })
@@ -69,7 +73,10 @@
                     email: _user.email,
                     password: _user.password
                 });
-            });
+            })
+                .catch(function(_status){
+                    console.log('CreateUser response status: ', _status);
+                });
         }
 
         return service;

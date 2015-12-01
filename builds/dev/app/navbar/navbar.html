@@ -24,15 +24,24 @@
                 <li ui-sref-active="active">
                     <a ui-sref="statistics">Statistics</a>
                 </li>
-                <li ui-sref-active="active">
+                <li ui-sref-active="active" ng-if="currentUser.loggedIn">
                     <a ui-sref="users">Users</a>
                 </li>
-            </ul>
-
-            <ul class="nav navbar-nav navbar-right">
                 <li ui-sref-active="active">
                     <a ui-sref="about">About us</a>
                 </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right" ng-if="currentUser.loggedIn">
+                <li>
+                    <a href="javascript:;">{{ currentUser.fullname }}</a>
+                </li>
+                <li>
+                    <a href="javascript:;" ng-click="logOut()">Log Out</a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right" ng-hide="currentUser.loggedIn">
                 <li ui-sref-active="active">
                     <a ui-sref="signin">Sign In</a>
                 </li>
