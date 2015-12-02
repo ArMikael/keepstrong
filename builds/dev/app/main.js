@@ -48,14 +48,16 @@
 
 
         $rootScope.$on('$stateChangeStart',
-            function(state, toState, toParams, fromState, fromParams){
+            function(event, toState, toParams, fromState, fromParams){
                 console.log('StateChangeStart');
+                console.log('isLoggedIn: ', dbc.isLoggedIn());
 
-                if (toState.authenticate && !dbc.isLoggedIn) {
+                if (toState.authenticate && !dbc.isLoggedIn()) {
                     $state.transitionTo('signin');
                     event.preventDefault();
-                } else if (!toState.authenticate ) {
-
+                } else if (!toState.authenticate && dbc.isLoggedIn()) {
+                    //$state.transitionTo('home');
+                    //event.preventDefault();
                 }
 
             });

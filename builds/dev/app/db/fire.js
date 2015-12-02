@@ -37,7 +37,7 @@
 
         // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
         function isLoggedIn() {
-            return ref.getAuth().$getAuth();
+            return auth.$getAuth();
         }
 
         // service.getRef = function(){

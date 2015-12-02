@@ -6,7 +6,7 @@
 
 
     // @ngInject
-    function RegistrationController(regFactory) {
+    function RegistrationController(regFactory, $state) {
         console.log('controller reg');
 
         var rc = this;
@@ -20,6 +20,7 @@
             regFactory.signIn(rc.signinUser)
                 .then(function(){
                     // For example after authorisation forward user to specific page with $location.path()
+                    $state.transitionTo('workout');
                 });
         };
 

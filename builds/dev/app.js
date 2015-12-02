@@ -49,14 +49,16 @@
 
 
         $rootScope.$on('$stateChangeStart',
-            function(state, toState, toParams, fromState, fromParams){
+            function(event, toState, toParams, fromState, fromParams){
                 console.log('StateChangeStart');
+                console.log('isLoggedIn: ', dbc.isLoggedIn());
 
-                if (toState.authenticate && !dbc.isLoggedIn) {
+                if (toState.authenticate && !dbc.isLoggedIn()) {
                     $state.transitionTo('signin');
                     event.preventDefault();
-                } else if (!toState.authenticate ) {
-
+                } else if (!toState.authenticate && dbc.isLoggedIn()) {
+                    //$state.transitionTo('home');
+                    //event.preventDefault();
                 }
 
             });
@@ -127,7 +129,7 @@
 
         // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
         function isLoggedIn() {
-            return ref.getAuth().$getAuth();
+            return auth.$getAuth();
         }
 
         // service.getRef = function(){
@@ -235,7 +237,7 @@
 
 
     // @ngInject
-    function RegistrationController(regFactory) {
+    function RegistrationController(regFactory, $state) {
         console.log('controller reg');
 
         var rc = this;
@@ -249,6 +251,7 @@
             regFactory.signIn(rc.signinUser)
                 .then(function(){
                     // For example after authorisation forward user to specific page with $location.path()
+                    $state.transitionTo('workout');
                 });
         };
 
@@ -267,7 +270,7 @@
                 });
         };
     }
-    RegistrationController.$inject = ["regFactory"];
+    RegistrationController.$inject = ["regFactory", "$state"];
 
 
 })();
