@@ -21,7 +21,7 @@
 
 
 		function getAllUsers() {
-			return $firebaseArray(ref).$loaded(function(_data){
+			return $firebaseArray(usersRef).$loaded(function(_data){
 				console.log('All Users from Firebase', _data);
 
 				return _data;
@@ -40,7 +40,7 @@
 
 		function getUser(id) {
 			console.log('ID', id);
-			return $firebaseObject(ref.child(id)).$loaded(function(_data){
+			return $firebaseObject(usersRef.child(id)).$loaded(function(_data){
 				console.log('User from Firebase', _data);
 
 				return _data;
@@ -50,7 +50,7 @@
 		function saveUser(_user) {
 			console.log('Saving user in factory');
 
-			var user = $firebaseObject(ref.child(_user.id));
+			var user = $firebaseObject(usersRef.child(_user.id));
 			return user.$loaded(function(_dbuser){
 				_dbuser.name = _user.name;
 				_dbuser.email = _user.email;
@@ -59,17 +59,17 @@
 		}
 
 		function deleteUser (_id) {
-			return $firebaseObject(ref.child(_id)).$remove();
+			return $firebaseObject(usersRef.child(_id)).$remove();
 		}
 
 		function createNewUser() {
-			return $firebaseArray(ref).$add({
+			return $firebaseArray(usersRef).$add({
 				name: '',
 				email: '',
 				registered: Firebase.ServerValue.TIMESTAMP,
 				last_visit: Firebase.ServerValue.TIMESTAMP
-			}).then(function(_ref){
-				return $firebaseObject(_ref).$loaded();
+			}).then(function(usersRef){
+				return $firebaseObject(usersRef).$loaded();
 			});
 		}
 
