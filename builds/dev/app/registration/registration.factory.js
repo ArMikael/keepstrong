@@ -6,7 +6,7 @@
 
 
     // @ngInject
-    function registrationFactory(dbc, $rootScope, usersFactory) {
+    function registrationFactory(dbc, $rootScope, usersFactory, $firebaseObject) {
         var auth = dbc.get$Auth();
 
         console.log('regFactory');
@@ -27,11 +27,13 @@
             if (authData) { // Logged in
                 console.log('onAuth: Logged in!', authData);
 
-                usersFactory.getUser(authData.uid).then(function(_user) {
-                    $rootScope.currentUser = {
-                        loggedIn: true,
-                        fullname: _user.name
-                    };
+                usersFactory.getUser(authData.uid)
+                    .then(function(_user) {
+                        console.log('_USER: ', _user);
+                        $rootScope.currentUser = {
+                            loggedIn: true,
+                            fullname: _user.name
+                        };
                 });
 
             } else { // Logged out
@@ -55,6 +57,22 @@
                     console.log("Login Failed!", error);
                 } else {
                     console.log("Authenticated successfully with payload:", authData);
+                    var userRef = dbc.getRef().child('users').child(authData.uid);
+                    var userObj = $firebaseObject(userRef);
+                    userObj.$loaded(function(_data) {
+                        console.log('User object from firebase for Google UID', _data);
+
+                        if (_data.registered) {
+                            userObj.last_visit = Firebase.ServerValue.TIMESTAMP;
+                        } else {
+                            userObj.name = authData.google.cachedUserProfile.given_name || '';
+                            userObj.surname = authData.google.cachedUserProfile.family_name || '';
+                            userObj.google_id = authData.google.id;
+                            userObj.registered = userObj.registered ? userObj.registered : Firebase.ServerValue.TIMESTAMP;
+                        }
+
+                        userObj.save();
+                    });
                 }
             });
         }

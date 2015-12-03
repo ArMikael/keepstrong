@@ -90,110 +90,6 @@
     AboutController.$inject = ["$rootScope"];
 
 })();
-(function () {
-    'use strict';
-
-    // Data Base Connection to Firebase
-    angular.module('kpStr.dbc', [
-        'firebase'
-    ])
-        .factory('dbc', dbcFactory);
-
-    // @ngInject
-    function dbcFactory(FURL, $firebaseAuth) {
-        var ref = new Firebase(FURL);
-        var auth = $firebaseAuth(ref);
-
-        var service = {
-            getRef: getRef,
-            getAuth: getAuth,
-            get$Auth: get$Auth,
-            isLoggedIn: isLoggedIn
-        };
-
-
-        // Return reference to the firebase db
-        function getRef() {
-            return ref;
-        }
-
-        // Native method from Firebase (faster then Angular-fire method)
-        function getAuth() {
-            return ref.getAuth();
-        }
-
-        // Method from Angular-Fire
-        function get$Auth() {
-            return auth;
-        }
-
-        // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
-        function isLoggedIn() {
-            return auth.$getAuth();
-        }
-
-        // service.getRef = function(){
-        //     return ref;
-        // };
-
-        return service;
-    }
-    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
-
-})();
-(function() {
-    'use strict';
-
-    angular.module('kpStr.exercises', [])
-        .config(ExercisesConfig)
-        .controller('ExercisesCtrl', ExercisesController);
-
-
-    // @ngInject
-    function ExercisesController($rootScope) {
-        var ec = this;
-
-        $rootScope.currentPage = 'exercises';
-
-        ec.message = "Let's start with some exercises!";
-    }
-    ExercisesController.$inject = ["$rootScope"];
-
-
-    // @ngInject
-    function ExercisesConfig($stateProvider) {
-        $stateProvider
-            .state('exercises', {
-                    url: '/exercises',
-                    controller: 'ExercisesCtrl',
-                    controllerAs: 'ec',
-                    templateUrl: 'app/exercises/exercises.html',
-                    authenticate: false
-                })
-
-            .state('exercises.stretching', {
-                url: '/stretching',
-                templateUrl: 'app/exercises/exercises.stretching.html',
-                authenticate: true
-            })
-
-            .state('exercises.endurance', {
-                url: '/endurance',
-                templateUrl: 'app/exercises/exercises.endurance.html',
-                authenticate: true
-            })
-
-            .state('exercises.strength', {
-                url: '/strength',
-                templateUrl: 'app/exercises/exercises.strength.html',
-                authenticate: true
-            })
-    }
-    ExercisesConfig.$inject = ["$stateProvider"];
-
-})();
-
-
 (function(){
     'use strict';
 
@@ -292,7 +188,7 @@
 
 
     // @ngInject
-    function registrationFactory(dbc, $rootScope, usersFactory) {
+    function registrationFactory(dbc, $rootScope, usersFactory, $firebaseObject) {
         var auth = dbc.get$Auth();
 
         console.log('regFactory');
@@ -313,11 +209,13 @@
             if (authData) { // Logged in
                 console.log('onAuth: Logged in!', authData);
 
-                usersFactory.getUser(authData.uid).then(function(_user) {
-                    $rootScope.currentUser = {
-                        loggedIn: true,
-                        fullname: _user.name
-                    };
+                usersFactory.getUser(authData.uid)
+                    .then(function(_user) {
+                        console.log('_USER: ', _user);
+                        $rootScope.currentUser = {
+                            loggedIn: true,
+                            fullname: _user.name
+                        };
                 });
 
             } else { // Logged out
@@ -341,6 +239,22 @@
                     console.log("Login Failed!", error);
                 } else {
                     console.log("Authenticated successfully with payload:", authData);
+                    var userRef = dbc.getRef().child('users').child(authData.uid);
+                    var userObj = $firebaseObject(userRef);
+                    userObj.$loaded(function(_data) {
+                        console.log('User object from firebase for Google UID', _data);
+
+                        if (_data.registered) {
+                            userObj.last_visit = Firebase.ServerValue.TIMESTAMP;
+                        } else {
+                            userObj.name = authData.google.cachedUserProfile.given_name || '';
+                            userObj.surname = authData.google.cachedUserProfile.family_name || '';
+                            userObj.google_id = authData.google.id;
+                            userObj.registered = userObj.registered ? userObj.registered : Firebase.ServerValue.TIMESTAMP;
+                        }
+
+                        userObj.save();
+                    });
                 }
             });
         }
@@ -379,7 +293,7 @@
 
         return service;
     }
-    registrationFactory.$inject = ["dbc", "$rootScope", "usersFactory"];
+    registrationFactory.$inject = ["dbc", "$rootScope", "usersFactory", "$firebaseObject"];
 
 })();
 /**
@@ -745,4 +659,108 @@
 	}
 	usersFactory.$inject = ["$q", "$http", "dbc", "$firebaseArray", "$firebaseObject"];
 	
+})();
+(function() {
+    'use strict';
+
+    angular.module('kpStr.exercises', [])
+        .config(ExercisesConfig)
+        .controller('ExercisesCtrl', ExercisesController);
+
+
+    // @ngInject
+    function ExercisesController($rootScope) {
+        var ec = this;
+
+        $rootScope.currentPage = 'exercises';
+
+        ec.message = "Let's start with some exercises!";
+    }
+    ExercisesController.$inject = ["$rootScope"];
+
+
+    // @ngInject
+    function ExercisesConfig($stateProvider) {
+        $stateProvider
+            .state('exercises', {
+                    url: '/exercises',
+                    controller: 'ExercisesCtrl',
+                    controllerAs: 'ec',
+                    templateUrl: 'app/exercises/exercises.html',
+                    authenticate: false
+                })
+
+            .state('exercises.stretching', {
+                url: '/stretching',
+                templateUrl: 'app/exercises/exercises.stretching.html',
+                authenticate: true
+            })
+
+            .state('exercises.endurance', {
+                url: '/endurance',
+                templateUrl: 'app/exercises/exercises.endurance.html',
+                authenticate: true
+            })
+
+            .state('exercises.strength', {
+                url: '/strength',
+                templateUrl: 'app/exercises/exercises.strength.html',
+                authenticate: true
+            })
+    }
+    ExercisesConfig.$inject = ["$stateProvider"];
+
+})();
+
+
+(function () {
+    'use strict';
+
+    // Data Base Connection to Firebase
+    angular.module('kpStr.dbc', [
+        'firebase'
+    ])
+        .factory('dbc', dbcFactory);
+
+    // @ngInject
+    function dbcFactory(FURL, $firebaseAuth) {
+        var ref = new Firebase(FURL);
+        var auth = $firebaseAuth(ref);
+
+        var service = {
+            getRef: getRef,
+            getAuth: getAuth,
+            get$Auth: get$Auth,
+            isLoggedIn: isLoggedIn
+        };
+
+
+        // Return reference to the firebase db
+        function getRef() {
+            return ref;
+        }
+
+        // Native method from Firebase (faster then Angular-fire method)
+        function getAuth() {
+            return ref.getAuth();
+        }
+
+        // Method from Angular-Fire
+        function get$Auth() {
+            return auth;
+        }
+
+        // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
+        function isLoggedIn() {
+            return auth.$getAuth();
+        }
+
+        // service.getRef = function(){
+        //     return ref;
+        // };
+
+        return service;
+    }
+    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
+
 })();
