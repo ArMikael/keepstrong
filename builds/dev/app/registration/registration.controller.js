@@ -25,6 +25,16 @@
         };
 
 
+        rc.signinGoogle = function() {
+            regFactory.signInGoogle()
+                .then(function(){
+                    console.log('Signed In with Google');
+                    // For example after authorisation forward user to specific page with $location.path()
+                    $state.transitionTo('workout');
+                });
+        };
+
+
         rc.regUser = {
             email: null,
             password: null,

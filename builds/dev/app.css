@@ -24,14 +24,14 @@
     height: 40px;
     font-size: 22px;
     padding: 0 10px; }
-  .sign-in-form input[type=submit],
-  .sign-in-form button,
-  .registration-form input[type=submit],
-  .registration-form button {
-    background-color: #228B22;
+  .sign-in-form a.btn,
+  .registration-form a.btn {
+    display: block;
     color: white;
     margin-bottom: 10px;
-    border: none; }
+    border: none;
+    font-size: 22px;
+    height: 40px; }
 
 .create-account {
   width: 320px;

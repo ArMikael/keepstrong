@@ -11,7 +11,8 @@
             <input type="password" name="password" id="password" placeholder="Password" required
                    ng-model="rc.signinUser.password" />
 
-            <input type="submit" class="btn" ng-click="rc.signin()" />
+            <button class="btn" ng-click="rc.signin()">Sign In</button>
+            <a class="btn btn-primary" ng-click="rc.signinGoogle()">Google Sign In</a>
 
             <a href="#" class="forgot-password">Forgot password?</a>
         </form>

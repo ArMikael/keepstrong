@@ -12,8 +12,9 @@
         console.log('regFactory');
 
         var service = {
-            signUp: signUp,
-            signIn: signIn
+            signIn: signIn,
+            signInGoogle: signInGoogle,
+            signUp: signUp
         };
 
 
@@ -45,6 +46,17 @@
 
         function signIn(_user) {
             return auth.$authWithPassword(_user);
+        }
+
+
+        function signInGoogle () {
+            return auth.$authWithOAuthPopup("google", function(error, authData) {
+                if (error) {
+                    console.log("Login Failed!", error);
+                } else {
+                    console.log("Authenticated successfully with payload:", authData);
+                }
+            });
         }
 
 
