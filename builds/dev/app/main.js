@@ -79,10 +79,17 @@
 
 
     // @ngInject
-    function AboutController($rootScope) {
-        var s = this;
+    function AboutController($rootScope, $interval) {
+        var ac = this;
 
-        s.message = 'About page!';
+        ac.usersCount = 9;
+
+        // Angular аналог setInterval(), который включает в себя встроенный $scope.$apply() для отслеживания изменений
+        // и их передачи между View и Model.
+        $interval(function () {
+            ac.usersCount += 3;
+            console.log('Users count: ', ac.usersCount);
+        }, 1000);
     }
 
 })();

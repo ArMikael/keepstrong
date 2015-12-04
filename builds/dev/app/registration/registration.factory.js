@@ -30,11 +30,15 @@
                 usersFactory.getUser(authData.uid)
                     .then(function(_user) {
                         console.log('_USER: ', _user);
-                        $rootScope.currentUser = {
-                            loggedIn: true,
-                            fullname: _user.name
-                        };
-                });
+
+                        _user.$watch(function(){
+                            $rootScope.currentUser = {
+                                loggedIn: true,
+                                fullname: _user.name
+                            };
+                        });
+
+                    });
 
             } else { // Logged out
                 console.log('onAuth: Logged out!', authData);

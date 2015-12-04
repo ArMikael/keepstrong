@@ -41,7 +41,7 @@
                 </li>
             </ul>
 
-            <ul class="nav navbar-nav navbar-right" ng-hide="currentUser.loggedIn">
+            <ul class="nav navbar-nav navbar-right" ng-if="!currentUser.loggedIn">
                 <li ui-sref-active="active">
                     <a ui-sref="signin">Sign In</a>
                 </li>
