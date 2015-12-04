@@ -31,8 +31,15 @@
                     .then(function(_user) {
                         console.log('_USER: ', _user);
 
+                        $rootScope.currentUser = {
+                            uid: authData.uid,
+                            loggedIn: true,
+                            fullname: _user.name
+                        };
+
                         _user.$watch(function(){
                             $rootScope.currentUser = {
+                                uid: authData.uid,
                                 loggedIn: true,
                                 fullname: _user.name
                             };
@@ -44,6 +51,7 @@
                 console.log('onAuth: Logged out!', authData);
 
                 $rootScope.currentUser = {
+                    uid: null,
                     loggedIn: false,
                     fullname: null
                 };

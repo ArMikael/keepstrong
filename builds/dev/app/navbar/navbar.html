@@ -34,7 +34,7 @@
 
             <ul class="nav navbar-nav navbar-right" ng-if="currentUser.loggedIn">
                 <li>
-                    <a href="javascript:;">{{ currentUser.fullname }}</a>
+                    <a ui-sref="profile({'uid':currentUser.uid})">{{ currentUser.fullname }}</a>
                 </li>
                 <li>
                     <a href="javascript:;" ng-click="logOut()">Log Out</a>

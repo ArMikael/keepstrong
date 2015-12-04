@@ -7,7 +7,8 @@
             'kpStr.stats',
             'kpStr.users',
             'kpStr.exercises',
-            'kpStr.registration'
+            'kpStr.registration',
+            'kpStr.profile'
     ])
         .constant('FURL', 'https://keepstrong.firebaseio.com/')
         .config(MainConfig)
@@ -88,7 +89,6 @@
         // и их передачи между View и Model.
         $interval(function () {
             ac.usersCount += 3;
-            console.log('Users count: ', ac.usersCount);
         }, 1000);
     }
 
