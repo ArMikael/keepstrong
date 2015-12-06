@@ -68,7 +68,7 @@
                 if (error) {
                     console.log("Login Failed!", error);
                 } else {
-                    console.log("Authenticated successfully with payload:", authData);
+                    console.log("Authenticated successfully:", authData);
                     var userRef = dbc.getRef().child('users').child(authData.uid);
                     var userObj = $firebaseObject(userRef);
                     userObj.$loaded(function(_data) {

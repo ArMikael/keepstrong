@@ -4,7 +4,7 @@
     angular.module('kpStr', [
             'ui.router',
             'ui.bootstrap',
-            'kpStr.workout',
+            'kpStr.workouts',
             'kpStr.stats',
             'kpStr.users',
             'kpStr.exercises',
@@ -40,7 +40,7 @@
             });
 
         $urlRouterProvider
-            .otherwise('/workout');
+            .otherwise('/workouts');
     }
 
 

@@ -4,7 +4,7 @@
     angular.module('kpStr', [
             'ui.router',
             'ui.bootstrap',
-            'kpStr.workout',
+            'kpStr.workouts',
             'kpStr.stats',
             'kpStr.users',
             'kpStr.exercises',
@@ -40,7 +40,7 @@
             });
 
         $urlRouterProvider
-            .otherwise('/workout');
+            .otherwise('/workouts');
     }
     MainConfig.$inject = ["$urlRouterProvider", "$stateProvider", "$logProvider"];
 
@@ -302,7 +302,7 @@
             regFactory.signIn(rc.signinUser)
                 .then(function(){
                     // For example after authorisation forward user to specific page with $location.path()
-                    $state.transitionTo('workout');
+                    $state.transitionTo('workouts');
                 });
         };
 
@@ -312,7 +312,7 @@
                 .then(function(){
                     console.log('Signed In with Google');
                     // For example after authorisation forward user to specific page with $location.path()
-                    $state.transitionTo('workout');
+                    $state.transitionTo('workouts');
                 });
         };
 
@@ -405,7 +405,7 @@
                 if (error) {
                     console.log("Login Failed!", error);
                 } else {
-                    console.log("Authenticated successfully with payload:", authData);
+                    console.log("Authenticated successfully:", authData);
                     var userRef = dbc.getRef().child('users').child(authData.uid);
                     var userObj = $firebaseObject(userRef);
                     userObj.$loaded(function(_data) {
@@ -834,60 +834,101 @@
 (function(){
     "use strict";
 
-    angular.module('kpStr.workout', [
-
+    angular.module('kpStr.workouts', [
+        'kpStr.dbc'
     ])
-        .config(WorkoutConfig);
+        .config(WorkoutsConfig);
 
     // @ngInject
-    function WorkoutConfig($stateProvider) {
+    function WorkoutsConfig($stateProvider) {
         $stateProvider
-            .state('workout', {
-                url: '/workout',
-                controller: 'WorkoutCtrl',
+            .state('workouts', {
+                url: '/workouts',
+                controller: 'WorkoutsCtrl',
                 controllerAs: 'wc',
-                templateUrl: 'app/workout/workout.html',
+                templateUrl: 'app/workouts/workouts.html',
                 authenticate: true
             })
     }
-    WorkoutConfig.$inject = ["$stateProvider"];
+    WorkoutsConfig.$inject = ["$stateProvider"];
+
 
 })();
 (function(){
     "use strict";
 
-    angular.module('kpStr.workout')
-        .controller('WorkoutCtrl', WorkoutController);
+    angular.module('kpStr.workouts')
+        .controller('WorkoutsCtrl', WorkoutsController);
 
     // @ngInject
-    function WorkoutController($rootScope, $log, workouts) {
+    function WorkoutsController($rootScope, $log, workouts) {
         var wc = this;
 
-        $log.debug('WorkoutController');
+        wc.message = "Workouts messsssage";
+
+
+        wc.editWorkout = function(_workout) {
+            console.log(_workout);
+
+            wc.editFormShow = true;
+            wc.editableWorkout = {
+                //id: _user.$id,
+                title: _workout.title,
+                type: _workout.type
+            }
+        };
+
+        wc.createWorkout = function(_workout) {
+            console.log('wrkOUT', _workout);
+            workouts.createWorkout(_workout);
+        };
+
+        $log.debug('WorkoutsController');
 
         //wc.workouts = workouts.getWorkouts();
     }
-    WorkoutController.$inject = ["$rootScope", "$log", "workouts"];
+    WorkoutsController.$inject = ["$rootScope", "$log", "workouts"];
 
 })();
 (function(){
     "use strict";
 
-    angular.module('kpStr.workout')
+    angular.module('kpStr.workouts')
         .factory('workouts', WorkoutsFactory);
 
     // @ngInject
-    function WorkoutsFactory($rootScope, $log) {
+    function WorkoutsFactory($rootScope, $log, $firebaseArray, $firebaseObject, dbc) {
+        $log.debug('WorkoutsFactory');
+
+        var ref = dbc.getRef();
+        var workoutsRef = ref.child('workouts');
+        
+        console.log('ref', ref, workoutsRef);
 
         var service = {
-
+            getWorkouts: getWorkouts,
+            createWorkout: createWorkout
         };
 
-        $log.debug('WorkoutFactory');
+        function getWorkouts() {
+            return $firebaseArray(workotsRef).$loaded(function(_data){
+                return _data;
+            });
+        }
+
+         function createWorkout(_workout) {
+             console.log('wokrout: ',_workout);
+            return $firebaseArray(workoutsRef).$add({
+                title: _workout.title,
+                type: _workout.type
+            }).then(function(_ref) {
+                return $firebaseObject(_ref).$loaded();
+            });
+        }
 
 
         return service;
     }
-    WorkoutsFactory.$inject = ["$rootScope", "$log"];
+    WorkoutsFactory.$inject = ["$rootScope", "$log", "$firebaseArray", "$firebaseObject", "dbc"];
 
 })();
