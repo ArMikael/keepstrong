@@ -47,7 +47,6 @@
     function MainRun($log, $rootScope, $state, $stateParams, dbc) {
         $log.debug('MainRun');
 
-
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
                 console.log('StateChangeStart');
@@ -70,20 +69,25 @@
 
     // @ngInject
     function MainController($scope, $rootScope, $log) {
-        var s = this;
+        var mc = this;
 
         $log.debug('MainCTRL');
 
-        s.message = 'Welcome to the KeepStrong App!';
-        s.run = 'Go fast, lets run';
+        mc.message = 'Welcome to the KeepStrong App!';
+        mc.run = 'Go fast, lets run';
     }
 
 
     // @ngInject
-    function AboutController($rootScope, $interval) {
+    function AboutController($scope, $rootScope, $interval) {
+        console.log('AboutController');
         var ac = this;
 
         ac.usersCount = 9;
+
+        $scope.$on('UsersBroadcast', function(event, msg){
+            console.log('GetAllUsersBroadcast $on catch event in AboutCtrl: ', event, msg);
+        });
 
         // Angular аналог setInterval(), который включает в себя встроенный $scope.$apply() для отслеживания изменений
         // и их передачи между View и Model.

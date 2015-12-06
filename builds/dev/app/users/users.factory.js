@@ -6,7 +6,7 @@
 
 
 	// @ngInject
-	function usersFactory($q, $http, dbc, $firebaseArray, $firebaseObject) {
+	function usersFactory($rootScope, dbc, $firebaseArray, $firebaseObject) {
 		var ref = dbc.getRef();
 		var usersRef = ref.child('users');
 		var users = null;
@@ -19,10 +19,12 @@
 			createNewUser: createNewUser
 		};
 
+		$rootScope.$broadcast('UsersBroadcast', {msg: "Get all users"});
+
 
 		function getAllUsers() {
 			return $firebaseArray(usersRef).$loaded(function(_data){
-				console.log('All Users from Firebase', _data);
+				console.log('Got all Users from Firebase');
 
 				return _data;
 			});
@@ -42,6 +44,8 @@
 			console.log('ID', id);
 			return $firebaseObject(usersRef.child(id)).$loaded(function(_data){
 				console.log('User from Firebase', _data);
+
+				$rootScope.$broadcast('UsersBroadcast', {msg: "Get all users"});
 
 				return _data;
 			});
