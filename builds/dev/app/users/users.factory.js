@@ -19,7 +19,7 @@
 			createNewUser: createNewUser
 		};
 
-		$rootScope.$broadcast('UsersBroadcast', {msg: "Get all users"});
+		$rootScope.$broadcast('UsersBroadcast', {msg: "Entered to the Users.Factory"});
 
 
 		function getAllUsers() {
@@ -45,7 +45,7 @@
 			return $firebaseObject(usersRef.child(id)).$loaded(function(_data){
 				console.log('User from Firebase', _data);
 
-				$rootScope.$broadcast('UsersBroadcast', {msg: "Get all users"});
+				$rootScope.$broadcast('UsersBroadcast', {msg: "Got specific user!"});
 
 				return _data;
 			});

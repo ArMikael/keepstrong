@@ -64,11 +64,11 @@
 			uc.users = _response;
 		});
 
-		usersFactory.getUser(2).then(function(_response){
-			console.log('getUser response', _response);
-
-			uc.user = _response;
-		})
+		//usersFactory.getUser(0).then(function(_response){
+		//	console.log('getUser response', _response);
+        //
+		//	uc.user = _response;
+		//})
 	}
 
 })();

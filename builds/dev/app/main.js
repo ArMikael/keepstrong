@@ -34,17 +34,15 @@
 
         $rootScope.$on('$stateChangeStart',
             function(event, toState, toParams, fromState, fromParams){
-                console.log('StateChangeStart');
-                console.log('isLoggedIn: ', dbc.isLoggedIn());
-
+                //console.log('toState:',toState, 'toParams:',toParams, 'fromState:',fromState, 'fromParams:',fromParams);
                 if (toState.authenticate && !dbc.isLoggedIn()) {
                     $state.transitionTo('signin');
+                    $rootScope.isLoggedIn = false;
                     event.preventDefault();
                 } else if (!toState.authenticate && dbc.isLoggedIn()) {
-                    $state.transitionTo('home');
+                    $rootScope.isLoggedIn = true;
                     //event.preventDefault();
                 }
-
             });
 
         $rootScope.$state = $state;
