@@ -4,45 +4,29 @@
     angular.module('kpStr', [
             'ui.router',
             'ui.bootstrap',
+            'kpStr.home',
             'kpStr.workouts',
             'kpStr.stats',
             'kpStr.users',
             'kpStr.exercises',
             'kpStr.registration',
+            'kpStr.about',
             'kpStr.profile'
     ])
         .constant('FURL', 'https://keepstrong.firebaseio.com/')
         .config(MainConfig)
         .run(MainRun)
-        .controller('MainCtrl', MainController)
-        .controller('AboutCtrl', AboutController);
+        .controller('MainCtrl', MainController);
 
 
     // @ngInject
-    function MainConfig($urlRouterProvider, $stateProvider, $logProvider) {
+    function MainConfig($urlRouterProvider, $logProvider) {
         $logProvider.debugEnabled(true);
 
-        $stateProvider
-            //.state('workout', {
-            //    url: '/workout',
-            //    controller: 'MainCtrl',
-            //    controllerAs: 'mc',
-            //    templateUrl: 'app/workout/workout.html',
-            //    authenticate: true
-            //})
-
-            .state('about', {
-                url: '/about',
-                controller: 'AboutCtrl',
-                controllerAs: 'ac',
-                templateUrl: 'app/about/about.html',
-                authenticate: false
-            });
-
         $urlRouterProvider
-            .otherwise('/workouts');
+            .otherwise('/');
     }
-    MainConfig.$inject = ["$urlRouterProvider", "$stateProvider", "$logProvider"];
+    MainConfig.$inject = ["$urlRouterProvider", "$logProvider"];
 
 
     // @ngInject
@@ -58,7 +42,7 @@
                     $state.transitionTo('signin');
                     event.preventDefault();
                 } else if (!toState.authenticate && dbc.isLoggedIn()) {
-                    //$state.transitionTo('home');
+                    $state.transitionTo('home');
                     //event.preventDefault();
                 }
 
@@ -71,16 +55,42 @@
 
 
     // @ngInject
-    function MainController($scope, $rootScope, $log) {
+    function MainController($rootScope, $log) {
         var mc = this;
 
         $log.debug('MainCTRL');
 
         mc.message = 'Welcome to the KeepStrong App!';
-        mc.run = 'Go fast, lets run';
     }
-    MainController.$inject = ["$scope", "$rootScope", "$log"];
+    MainController.$inject = ["$rootScope", "$log"];
 
+})();
+(function(){
+    "use strict";
+
+    angular.module('kpStr.about', [])
+        .config(AboutConfig);
+
+    // @ngInject
+    function AboutConfig($stateProvider) {
+        $stateProvider
+            .state('about', {
+                url: '/about',
+                controller: 'AboutCtrl',
+                controllerAs: 'ac',
+                templateUrl: 'app/about/about.html',
+                authenticate: false
+            });
+
+    }
+    AboutConfig.$inject = ["$stateProvider"];
+
+})();
+(function(){
+    "use strict";
+
+    angular.module('kpStr.about')
+        .controller('AboutCtrl', AboutController);
 
     // @ngInject
     function AboutController($scope, $rootScope, $interval) {
@@ -206,7 +216,41 @@
 })();
 
 
+(function(){
+    "use strict";
 
+    angular.module('kpStr.home', [])
+        .config(HomeConfig);
+
+    // @ngInject
+    function HomeConfig($stateProvider) {
+        $stateProvider
+            .state('home', {
+                url: '/',
+                controller: 'HomeCtrl',
+                controllerAs: 'hc',
+                templateUrl: 'app/home/home.html',
+                authenticate: false
+
+            })
+    }
+    HomeConfig.$inject = ["$stateProvider"];
+
+})();
+(function(){
+    "use strict";
+    
+    angular.module('kpStr.home')
+        .controller('HomeCtrl', HomeController);
+    
+    // @ngInject
+    function HomeController() {
+        var hc = this;
+
+        console.log('HomeController');
+    }
+    
+})();
 (function(){
     'use strict';
 
