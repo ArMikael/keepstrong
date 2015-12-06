@@ -4,6 +4,7 @@
     angular.module('kpStr', [
             'ui.router',
             'ui.bootstrap',
+            'kpStr.workout',
             'kpStr.stats',
             'kpStr.users',
             'kpStr.exercises',
@@ -22,13 +23,13 @@
         $logProvider.debugEnabled(true);
 
         $stateProvider
-            .state('workout', {
-                url: '/workout',
-                controller: 'MainCtrl',
-                controllerAs: 'mc',
-                templateUrl: 'app/workout/workout.html',
-                authenticate: true
-            })
+            //.state('workout', {
+            //    url: '/workout',
+            //    controller: 'MainCtrl',
+            //    controllerAs: 'mc',
+            //    templateUrl: 'app/workout/workout.html',
+            //    authenticate: true
+            //})
 
             .state('about', {
                 url: '/about',
