@@ -8,7 +8,10 @@
     function WorkoutsController($rootScope, $log, workouts) {
         var wc = this;
 
-        wc.message = "Workouts messsssage";
+        workouts.getAllWorkouts().then(function(_response){
+            console.log('response', _response)
+            wc.workouts = _response;
+        });
 
 
         wc.editWorkout = function(_workout) {

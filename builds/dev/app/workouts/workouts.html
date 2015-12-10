@@ -24,6 +24,13 @@
     </div>
 
 
+    <h2>Workouts from server</h2>
+    <div class="training-block" ng-repeat="workout in wc.workouts">
+        <h3>{{workout.title}}</h3>
+        <p>{{workout.type}}</p>
+    </div>
+
+
     <h2>Adding New Workouts</h2>
     <!-- <form ng-show="wc.editFormShow" name="addWorkout"> -->
     <form name="addWorkout">

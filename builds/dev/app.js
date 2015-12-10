@@ -905,7 +905,10 @@
     function WorkoutsController($rootScope, $log, workouts) {
         var wc = this;
 
-        wc.message = "Workouts messsssage";
+        workouts.getAllWorkouts().then(function(_response){
+            console.log('response', _response)
+            wc.workouts = _response;
+        });
 
 
         wc.editWorkout = function(_workout) {
@@ -952,14 +955,14 @@
         console.log('ref', ref, workoutsRef);
 
         var service = {
-            getWorkouts: getWorkouts,
+            getAllWorkouts: getAllWorkouts,
             saveWorkouts: saveWorkouts,
             createWorkout: createWorkout,
             deleteWorkout: deleteWorkout
         };
 
-        function getWorkouts() {
-            return $firebaseArray(workotsRef).$loaded(function(_data) {
+        function getAllWorkouts() {
+            return $firebaseArray(workoutsRef).$loaded(function(_data) {
                 console.log('Getting workouts from firebase to factory', _data);
                 return _data;
             });
@@ -970,7 +973,7 @@
             var wrkRef = $firebaseObject(exRef.child(_workout.id));
 
             return wrkRef.$loaded(function(_workoutDB) {
-                _workoutDB.name = _workout.name;
+                _workoutDB.title = _workout.title;
                 _workoutDB.type = _workout.type;
                 return wrkRef.$save();
             });
