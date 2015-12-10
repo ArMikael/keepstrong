@@ -9,7 +9,6 @@
 	function usersFactory($rootScope, dbc, $firebaseArray, $firebaseObject) {
 		var ref = dbc.getRef();
 		var usersRef = ref.child('users');
-		var users = null;
 
 		var service = {
 			getAllUsers: getAllUsers,

@@ -110,6 +110,57 @@
     AboutController.$inject = ["$scope", "$rootScope", "$interval"];
 
 })();
+(function () {
+    'use strict';
+
+    // Data Base Connection to Firebase
+    angular.module('kpStr.dbc', [
+        'firebase'
+    ])
+        .factory('dbc', dbcFactory);
+
+    // @ngInject
+    function dbcFactory(FURL, $firebaseAuth) {
+        var ref = new Firebase(FURL);
+        var auth = $firebaseAuth(ref);
+
+        var service = {
+            getRef: getRef,
+            getAuth: getAuth,
+            get$Auth: get$Auth,
+            isLoggedIn: isLoggedIn
+        };
+
+
+        // Return reference to the firebase db
+        function getRef() {
+            return ref;
+        }
+
+        // Native method from Firebase (faster then Angular-fire method)
+        function getAuth() {
+            return ref.getAuth();
+        }
+
+        // Method from Angular-Fire
+        function get$Auth() {
+            return auth;
+        }
+
+        // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
+        function isLoggedIn() {
+            return auth.$getAuth();
+        }
+
+        // service.getRef = function(){
+        //     return ref;
+        // };
+
+        return service;
+    }
+    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
+
+})();
 (function() {
     'use strict';
 
@@ -163,55 +214,295 @@
 })();
 
 
-(function () {
-    'use strict';
+(function(){
+    "use strict";
 
-    // Data Base Connection to Firebase
-    angular.module('kpStr.dbc', [
-        'firebase'
-    ])
-        .factory('dbc', dbcFactory);
+    angular.module('kpStr.home', [])
+        .config(HomeConfig);
 
     // @ngInject
-    function dbcFactory(FURL, $firebaseAuth) {
-        var ref = new Firebase(FURL);
-        var auth = $firebaseAuth(ref);
+    function HomeConfig($stateProvider) {
+        $stateProvider
+            .state('home', {
+                url: '/',
+                controller: 'HomeCtrl',
+                controllerAs: 'hc',
+                templateUrl: 'app/home/home.html',
+                authenticate: false
 
-        var service = {
-            getRef: getRef,
-            getAuth: getAuth,
-            get$Auth: get$Auth,
-            isLoggedIn: isLoggedIn
+            })
+    }
+    HomeConfig.$inject = ["$stateProvider"];
+
+})();
+(function(){
+    "use strict";
+    
+    angular.module('kpStr.home')
+        .controller('HomeCtrl', HomeController);
+    
+    // @ngInject
+    function HomeController() {
+        var hc = this;
+
+        console.log('HomeController');
+    }
+    
+})();
+(function(){
+    'use strict';
+
+    angular.module('kpStr.profile', [
+        'kpStr.users'
+    ])
+        .config(ProfileConfig)
+        .controller('ProfileCtrl', ProfileController);
+
+    // @ngInject
+    function ProfileConfig($stateProvider) {
+        console.log('Profile Config');
+
+        $stateProvider
+            .state('profile', {
+                url: '/profile/:uid',
+                templateUrl: 'app/profile/profile.html',
+                controller: 'ProfileCtrl',
+                controllerAs: 'pc',
+                authenticate: true
+            })
+    }
+    ProfileConfig.$inject = ["$stateProvider"];
+
+
+    // @ngInject
+    function ProfileController(usersFactory, $stateParams) {
+        var pc = this;
+
+        usersFactory.getUser($stateParams.uid)
+            .then(function(_user){
+                pc.profile = _user;
+            });
+
+    }
+    ProfileController.$inject = ["usersFactory", "$stateParams"];
+
+})();
+(function(){
+    'use strict';
+
+    angular.module('kpStr.registration', [
+        'kpStr.dbc'
+    ])
+        .config(registrationConfig);
+
+
+
+    // @ngInject
+    function registrationConfig($stateProvider) {
+        $stateProvider
+            .state('signin', {
+                url: '/signin',
+                controller: 'RegCtrl',
+                controllerAs: 'rc',
+                templateUrl: 'app/registration/signin.html',
+                authenticate: false
+            })
+
+            .state('registration', {
+                url: '/registration',
+                controller: 'RegCtrl',
+                controllerAs: 'rc',
+                templateUrl: 'app/registration/registration.html',
+                authenticate: false
+            })
+    }
+    registrationConfig.$inject = ["$stateProvider"];
+
+})();
+
+
+
+(function(){
+    'use strict';
+
+    angular.module('kpStr.registration')
+        .controller('RegCtrl', RegistrationController);
+
+
+    // @ngInject
+    function RegistrationController(regFactory, $state) {
+        console.log('controller reg');
+
+        var rc = this;
+
+        rc.signinUser = {
+            email: null,
+            password: null
+        };
+
+        rc.signin = function() {
+            regFactory.signIn(rc.signinUser)
+                .then(function(){
+                    // For example after authorisation forward user to specific page with $location.path()
+                    $state.transitionTo('workouts');
+                });
         };
 
 
-        // Return reference to the firebase db
-        function getRef() {
-            return ref;
+        rc.signinGoogle = function() {
+            regFactory.signInGoogle()
+                .then(function(){
+                    console.log('Signed In with Google');
+                    // For example after authorisation forward user to specific page with $location.path()
+                    $state.transitionTo('workouts');
+                });
+        };
+
+
+        rc.regUser = {
+            email: null,
+            password: null,
+            name: null
+        };
+
+        rc.signup = function() {
+            console.log('signup');
+            regFactory.signUp(rc.regUser)
+                .then(function(){
+
+                });
+        };
+    }
+    RegistrationController.$inject = ["regFactory", "$state"];
+
+
+})();
+(function(){
+    'use strict';
+
+    angular.module('kpStr.registration')
+        .factory('regFactory', registrationFactory);
+
+
+    // @ngInject
+    function registrationFactory(dbc, $rootScope, usersFactory, $firebaseObject) {
+        var auth = dbc.get$Auth();
+
+        console.log('regFactory');
+
+        var service = {
+            signIn: signIn,
+            signInGoogle: signInGoogle,
+            signUp: signUp
+        };
+
+
+        $rootScope.logOut = function() {
+            auth.$unauth();
+        };
+
+
+        auth.$onAuth(function(authData){
+            if (authData) { // Logged in
+                console.log('onAuth: Logged in!', authData);
+
+                usersFactory.getUser(authData.uid)
+                    .then(function(_user) {
+                        console.log('_USER: ', _user);
+
+                        $rootScope.currentUser = {
+                            uid: authData.uid,
+                            loggedIn: true,
+                            fullname: _user.name
+                        };
+
+                        _user.$watch(function(){
+                            $rootScope.currentUser = {
+                                uid: authData.uid,
+                                loggedIn: true,
+                                fullname: _user.name
+                            };
+                        });
+
+                    });
+
+            } else { // Logged out
+                console.log('onAuth: Logged out!', authData);
+
+                $rootScope.currentUser = {
+                    uid: null,
+                    loggedIn: false,
+                    fullname: null
+                };
+            }
+        });
+
+        function signIn(_user) {
+            return auth.$authWithPassword(_user);
         }
 
-        // Native method from Firebase (faster then Angular-fire method)
-        function getAuth() {
-            return ref.getAuth();
+
+        function signInGoogle () {
+            return auth.$authWithOAuthPopup("google", function(error, authData) {
+                if (error) {
+                    console.log("Login Failed!", error);
+                } else {
+                    console.log("Authenticated successfully:", authData);
+                    var userRef = dbc.getRef().child('users').child(authData.uid);
+                    var userObj = $firebaseObject(userRef);
+                    userObj.$loaded(function(_data) {
+                        console.log('User object from firebase for Google UID', _data);
+
+                        if (_data.registered) {
+                            userObj.last_visit = Firebase.ServerValue.TIMESTAMP;
+                        } else {
+                            userObj.name = authData.google.cachedUserProfile.given_name || '';
+                            userObj.surname = authData.google.cachedUserProfile.family_name || '';
+                            userObj.google_id = authData.google.id;
+                            userObj.registered = userObj.registered ? userObj.registered : Firebase.ServerValue.TIMESTAMP;
+                        }
+
+                        userObj.save();
+                    });
+                }
+            });
         }
 
-        // Method from Angular-Fire
-        function get$Auth() {
-            return auth;
-        }
 
-        // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
-        function isLoggedIn() {
-            return auth.$getAuth();
-        }
+        function signUp(_user) {
+            console.log('registrationFactory.signUp');
 
-        // service.getRef = function(){
-        //     return ref;
-        // };
+            return auth.$createUser({
+                email: _user.email,
+                password: _user.password
+            })
+                .then(function(userData){
+                console.log('User ' + userData.uid + ' created successfully!');
+                var userRef = dbc.getRef().child('users').child(userData.uid);
+
+                    console.log('promise from dbc', userData);
+
+                // set() method will redefine object from the reference
+                userRef.set({
+                    name: _user.name,
+                    email: _user.email,
+                    registered: Firebase.ServerValue.TIMESTAMP,
+                    last_visit: Firebase.ServerValue.TIMESTAMP
+                });
+
+                return auth.$authWithPassword({
+                    email: _user.email,
+                    password: _user.password
+                });
+            })
+                .catch(function(_status){
+                    console.log('CreateUser response status: ', _status);
+                });
+        }
 
         return service;
     }
-    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
+    registrationFactory.$inject = ["dbc", "$rootScope", "usersFactory", "$firebaseObject"];
 
 })();
 /**
@@ -505,7 +796,6 @@
 	function usersFactory($rootScope, dbc, $firebaseArray, $firebaseObject) {
 		var ref = dbc.getRef();
 		var usersRef = ref.child('users');
-		var users = null;
 
 		var service = {
 			getAllUsers: getAllUsers,
@@ -634,6 +924,11 @@
             workouts.createWorkout(_workout);
         };
 
+        wc.removeWorkout = function(_workout) {
+            console.log('removeWorkout', _workout);
+            workouts.deleteWorkout(_workout);
+        };
+
         $log.debug('WorkoutsController');
 
         //wc.workouts = workouts.getWorkouts();
@@ -658,17 +953,31 @@
 
         var service = {
             getWorkouts: getWorkouts,
-            createWorkout: createWorkout
+            saveWorkouts: saveWorkouts,
+            createWorkout: createWorkout,
+            deleteWorkout: deleteWorkout
         };
 
         function getWorkouts() {
-            return $firebaseArray(workotsRef).$loaded(function(_data){
+            return $firebaseArray(workotsRef).$loaded(function(_data) {
+                console.log('Getting workouts from firebase to factory', _data);
                 return _data;
             });
         }
 
+
+        function saveWorkouts(_workout) {
+            var wrkRef = $firebaseObject(exRef.child(_workout.id));
+
+            return wrkRef.$loaded(function(_workoutDB) {
+                _workoutDB.name = _workout.name;
+                _workoutDB.type = _workout.type;
+                return wrkRef.$save();
+            });
+        }
+
          function createWorkout(_workout) {
-             console.log('wokrout: ',_workout);
+            console.log('createWorkout workout: ',_workout);
             return $firebaseArray(workoutsRef).$add({
                 title: _workout.title,
                 type: _workout.type
@@ -677,300 +986,13 @@
             });
         }
 
+        function deleteWorkout(_workout) {
+            return $firebaseObject(workoutsRef.child(_workout.id)).$remove();
+        }
+
 
         return service;
     }
     WorkoutsFactory.$inject = ["$rootScope", "$log", "$firebaseArray", "$firebaseObject", "dbc"];
 
-})();
-(function(){
-    'use strict';
-
-    angular.module('kpStr.profile', [
-        'kpStr.users'
-    ])
-        .config(ProfileConfig)
-        .controller('ProfileCtrl', ProfileController);
-
-    // @ngInject
-    function ProfileConfig($stateProvider) {
-        console.log('Profile Config');
-
-        $stateProvider
-            .state('profile', {
-                url: '/profile/:uid',
-                templateUrl: 'app/profile/profile.html',
-                controller: 'ProfileCtrl',
-                controllerAs: 'pc',
-                authenticate: true
-            })
-    }
-    ProfileConfig.$inject = ["$stateProvider"];
-
-
-    // @ngInject
-    function ProfileController(usersFactory, $stateParams) {
-        var pc = this;
-
-        usersFactory.getUser($stateParams.uid)
-            .then(function(_user){
-                pc.profile = _user;
-            });
-
-    }
-    ProfileController.$inject = ["usersFactory", "$stateParams"];
-
-})();
-(function(){
-    'use strict';
-
-    angular.module('kpStr.registration', [
-        'kpStr.dbc'
-    ])
-        .config(registrationConfig);
-
-
-
-    // @ngInject
-    function registrationConfig($stateProvider) {
-        $stateProvider
-            .state('signin', {
-                url: '/signin',
-                controller: 'RegCtrl',
-                controllerAs: 'rc',
-                templateUrl: 'app/registration/signin.html',
-                authenticate: false
-            })
-
-            .state('registration', {
-                url: '/registration',
-                controller: 'RegCtrl',
-                controllerAs: 'rc',
-                templateUrl: 'app/registration/registration.html',
-                authenticate: false
-            })
-    }
-    registrationConfig.$inject = ["$stateProvider"];
-
-})();
-
-
-
-(function(){
-    'use strict';
-
-    angular.module('kpStr.registration')
-        .controller('RegCtrl', RegistrationController);
-
-
-    // @ngInject
-    function RegistrationController(regFactory, $state) {
-        console.log('controller reg');
-
-        var rc = this;
-
-        rc.signinUser = {
-            email: null,
-            password: null
-        };
-
-        rc.signin = function() {
-            regFactory.signIn(rc.signinUser)
-                .then(function(){
-                    // For example after authorisation forward user to specific page with $location.path()
-                    $state.transitionTo('workouts');
-                });
-        };
-
-
-        rc.signinGoogle = function() {
-            regFactory.signInGoogle()
-                .then(function(){
-                    console.log('Signed In with Google');
-                    // For example after authorisation forward user to specific page with $location.path()
-                    $state.transitionTo('workouts');
-                });
-        };
-
-
-        rc.regUser = {
-            email: null,
-            password: null,
-            name: null
-        };
-
-        rc.signup = function() {
-            console.log('signup');
-            regFactory.signUp(rc.regUser)
-                .then(function(){
-
-                });
-        };
-    }
-    RegistrationController.$inject = ["regFactory", "$state"];
-
-
-})();
-(function(){
-    'use strict';
-
-    angular.module('kpStr.registration')
-        .factory('regFactory', registrationFactory);
-
-
-    // @ngInject
-    function registrationFactory(dbc, $rootScope, usersFactory, $firebaseObject) {
-        var auth = dbc.get$Auth();
-
-        console.log('regFactory');
-
-        var service = {
-            signIn: signIn,
-            signInGoogle: signInGoogle,
-            signUp: signUp
-        };
-
-
-        $rootScope.logOut = function() {
-            auth.$unauth();
-        };
-
-
-        auth.$onAuth(function(authData){
-            if (authData) { // Logged in
-                console.log('onAuth: Logged in!', authData);
-
-                usersFactory.getUser(authData.uid)
-                    .then(function(_user) {
-                        console.log('_USER: ', _user);
-
-                        $rootScope.currentUser = {
-                            uid: authData.uid,
-                            loggedIn: true,
-                            fullname: _user.name
-                        };
-
-                        _user.$watch(function(){
-                            $rootScope.currentUser = {
-                                uid: authData.uid,
-                                loggedIn: true,
-                                fullname: _user.name
-                            };
-                        });
-
-                    });
-
-            } else { // Logged out
-                console.log('onAuth: Logged out!', authData);
-
-                $rootScope.currentUser = {
-                    uid: null,
-                    loggedIn: false,
-                    fullname: null
-                };
-            }
-        });
-
-        function signIn(_user) {
-            return auth.$authWithPassword(_user);
-        }
-
-
-        function signInGoogle () {
-            return auth.$authWithOAuthPopup("google", function(error, authData) {
-                if (error) {
-                    console.log("Login Failed!", error);
-                } else {
-                    console.log("Authenticated successfully:", authData);
-                    var userRef = dbc.getRef().child('users').child(authData.uid);
-                    var userObj = $firebaseObject(userRef);
-                    userObj.$loaded(function(_data) {
-                        console.log('User object from firebase for Google UID', _data);
-
-                        if (_data.registered) {
-                            userObj.last_visit = Firebase.ServerValue.TIMESTAMP;
-                        } else {
-                            userObj.name = authData.google.cachedUserProfile.given_name || '';
-                            userObj.surname = authData.google.cachedUserProfile.family_name || '';
-                            userObj.google_id = authData.google.id;
-                            userObj.registered = userObj.registered ? userObj.registered : Firebase.ServerValue.TIMESTAMP;
-                        }
-
-                        userObj.save();
-                    });
-                }
-            });
-        }
-
-
-        function signUp(_user) {
-            console.log('registrationFactory.signUp');
-
-            return auth.$createUser({
-                email: _user.email,
-                password: _user.password
-            })
-                .then(function(userData){
-                console.log('User ' + userData.uid + ' created successfully!');
-                var userRef = dbc.getRef().child('users').child(userData.uid);
-
-                    console.log('promise from dbc', userData);
-
-                // set() method will redefine object from the reference
-                userRef.set({
-                    name: _user.name,
-                    email: _user.email,
-                    registered: Firebase.ServerValue.TIMESTAMP,
-                    last_visit: Firebase.ServerValue.TIMESTAMP
-                });
-
-                return auth.$authWithPassword({
-                    email: _user.email,
-                    password: _user.password
-                });
-            })
-                .catch(function(_status){
-                    console.log('CreateUser response status: ', _status);
-                });
-        }
-
-        return service;
-    }
-    registrationFactory.$inject = ["dbc", "$rootScope", "usersFactory", "$firebaseObject"];
-
-})();
-(function(){
-    "use strict";
-
-    angular.module('kpStr.home', [])
-        .config(HomeConfig);
-
-    // @ngInject
-    function HomeConfig($stateProvider) {
-        $stateProvider
-            .state('home', {
-                url: '/',
-                controller: 'HomeCtrl',
-                controllerAs: 'hc',
-                templateUrl: 'app/home/home.html',
-                authenticate: false
-
-            })
-    }
-    HomeConfig.$inject = ["$stateProvider"];
-
-})();
-(function(){
-    "use strict";
-    
-    angular.module('kpStr.home')
-        .controller('HomeCtrl', HomeController);
-    
-    // @ngInject
-    function HomeController() {
-        var hc = this;
-
-        console.log('HomeController');
-    }
-    
 })();

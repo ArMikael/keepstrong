@@ -27,6 +27,11 @@
             workouts.createWorkout(_workout);
         };
 
+        wc.removeWorkout = function(_workout) {
+            console.log('removeWorkout', _workout);
+            workouts.deleteWorkout(_workout);
+        };
+
         $log.debug('WorkoutsController');
 
         //wc.workouts = workouts.getWorkouts();

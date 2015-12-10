@@ -15,23 +15,41 @@
 
         var service = {
             getWorkouts: getWorkouts,
-            createWorkout: createWorkout
+            saveWorkouts: saveWorkouts,
+            createWorkout: createWorkout,
+            deleteWorkout: deleteWorkout
         };
 
         function getWorkouts() {
-            return $firebaseArray(workotsRef).$loaded(function(_data){
+            return $firebaseArray(workotsRef).$loaded(function(_data) {
+                console.log('Getting workouts from firebase to factory', _data);
                 return _data;
             });
         }
 
+
+        function saveWorkouts(_workout) {
+            var wrkRef = $firebaseObject(exRef.child(_workout.id));
+
+            return wrkRef.$loaded(function(_workoutDB) {
+                _workoutDB.name = _workout.name;
+                _workoutDB.type = _workout.type;
+                return wrkRef.$save();
+            });
+        }
+
          function createWorkout(_workout) {
-             console.log('wokrout: ',_workout);
+            console.log('createWorkout workout: ',_workout);
             return $firebaseArray(workoutsRef).$add({
                 title: _workout.title,
                 type: _workout.type
             }).then(function(_ref) {
                 return $firebaseObject(_ref).$loaded();
             });
+        }
+
+        function deleteWorkout(_workout) {
+            return $firebaseObject(workoutsRef.child(_workout.id)).$remove();
         }
 
 
