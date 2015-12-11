@@ -24,9 +24,13 @@
     </div>
 
 
+    <pre>{{wc.editableWorkout}}</pre>
+
     <h2>Workouts from server</h2>
-    <div class="training-block" ng-repeat="workout in wc.workouts">
-        <h3>{{workout.title}}</h3>
+    <div class="training-block" ng-repeat="workout in wc.workouts" ng-click="wc.editWorkout(workout)">
+        <h3 contenteditable="true">{{workout.title}}
+            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+        </h3>
         <p>{{workout.type}}</p>
     </div>
 
@@ -44,9 +48,11 @@
             <input type="text" class="form-control" id="workoutType" placeholder="Workout Type"
                    ng-model="wc.editableWorkout.type">
         </div>
-        <button type="submit" class="btn btn-success" ng-click="wc.createWorkout(wc.editableWorkout)">Save</button>
-        <button type="submit" class="btn btn-default" ng-click="wc.cancelEditWorkout()">Cancel</button>
-        <button type="submit" class="btn btn-danger" ng-click="wc.removeWorkout(wc.editableWorkout)">Delete</button>
+        <button class="btn btn-primary" ng-click="wc.createWorkout(wc.editableWorkout)">Create user</button>
+
+        <button class="btn btn-success" ng-click="wc.saveWorkout()">Save</button>
+        <button class="btn btn-default" ng-click="wc.cancelEditWorkout()">Cancel</button>
+        <button class="btn btn-danger" ng-click="wc.removeWorkout(wc.editableWorkout)">Delete</button>
 
     </form>
 

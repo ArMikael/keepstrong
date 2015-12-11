@@ -28,7 +28,7 @@
         }
 
 
-        function saveWorkouts(_workout) {
+        function saveWorkout(_workout) {
             var wrkRef = $firebaseObject(exRef.child(_workout.id));
 
             return wrkRef.$loaded(function(_workoutDB) {

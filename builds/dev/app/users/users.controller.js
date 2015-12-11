@@ -27,7 +27,7 @@
 
 		uc.saveUser = function() {
 			usersFactory.saveUser(uc.editableUser)
-				.then(function () {
+				.then(function() {
 					uc.cancelEditUser();
 				});
 		};

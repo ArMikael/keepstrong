@@ -161,6 +161,41 @@
     dbcFactory.$inject = ["FURL", "$firebaseAuth"];
 
 })();
+(function(){
+    "use strict";
+
+    angular.module('kpStr.home', [])
+        .config(HomeConfig);
+
+    // @ngInject
+    function HomeConfig($stateProvider) {
+        $stateProvider
+            .state('home', {
+                url: '/',
+                controller: 'HomeCtrl',
+                controllerAs: 'hc',
+                templateUrl: 'app/home/home.html',
+                authenticate: false
+
+            })
+    }
+    HomeConfig.$inject = ["$stateProvider"];
+
+})();
+(function(){
+    "use strict";
+    
+    angular.module('kpStr.home')
+        .controller('HomeCtrl', HomeController);
+    
+    // @ngInject
+    function HomeController() {
+        var hc = this;
+
+        console.log('HomeController');
+    }
+    
+})();
 (function() {
     'use strict';
 
@@ -214,79 +249,6 @@
 })();
 
 
-(function(){
-    "use strict";
-
-    angular.module('kpStr.home', [])
-        .config(HomeConfig);
-
-    // @ngInject
-    function HomeConfig($stateProvider) {
-        $stateProvider
-            .state('home', {
-                url: '/',
-                controller: 'HomeCtrl',
-                controllerAs: 'hc',
-                templateUrl: 'app/home/home.html',
-                authenticate: false
-
-            })
-    }
-    HomeConfig.$inject = ["$stateProvider"];
-
-})();
-(function(){
-    "use strict";
-    
-    angular.module('kpStr.home')
-        .controller('HomeCtrl', HomeController);
-    
-    // @ngInject
-    function HomeController() {
-        var hc = this;
-
-        console.log('HomeController');
-    }
-    
-})();
-(function(){
-    'use strict';
-
-    angular.module('kpStr.profile', [
-        'kpStr.users'
-    ])
-        .config(ProfileConfig)
-        .controller('ProfileCtrl', ProfileController);
-
-    // @ngInject
-    function ProfileConfig($stateProvider) {
-        console.log('Profile Config');
-
-        $stateProvider
-            .state('profile', {
-                url: '/profile/:uid',
-                templateUrl: 'app/profile/profile.html',
-                controller: 'ProfileCtrl',
-                controllerAs: 'pc',
-                authenticate: true
-            })
-    }
-    ProfileConfig.$inject = ["$stateProvider"];
-
-
-    // @ngInject
-    function ProfileController(usersFactory, $stateParams) {
-        var pc = this;
-
-        usersFactory.getUser($stateParams.uid)
-            .then(function(_user){
-                pc.profile = _user;
-            });
-
-    }
-    ProfileController.$inject = ["usersFactory", "$stateParams"];
-
-})();
 (function(){
     'use strict';
 
@@ -503,6 +465,44 @@
         return service;
     }
     registrationFactory.$inject = ["dbc", "$rootScope", "usersFactory", "$firebaseObject"];
+
+})();
+(function(){
+    'use strict';
+
+    angular.module('kpStr.profile', [
+        'kpStr.users'
+    ])
+        .config(ProfileConfig)
+        .controller('ProfileCtrl', ProfileController);
+
+    // @ngInject
+    function ProfileConfig($stateProvider) {
+        console.log('Profile Config');
+
+        $stateProvider
+            .state('profile', {
+                url: '/profile/:uid',
+                templateUrl: 'app/profile/profile.html',
+                controller: 'ProfileCtrl',
+                controllerAs: 'pc',
+                authenticate: true
+            })
+    }
+    ProfileConfig.$inject = ["$stateProvider"];
+
+
+    // @ngInject
+    function ProfileController(usersFactory, $stateParams) {
+        var pc = this;
+
+        usersFactory.getUser($stateParams.uid)
+            .then(function(_user){
+                pc.profile = _user;
+            });
+
+    }
+    ProfileController.$inject = ["usersFactory", "$stateParams"];
 
 })();
 /**
@@ -739,7 +739,7 @@
 
 		uc.saveUser = function() {
 			usersFactory.saveUser(uc.editableUser)
-				.then(function () {
+				.then(function() {
 					uc.cancelEditUser();
 				});
 		};
@@ -916,7 +916,7 @@
 
             wc.editFormShow = true;
             wc.editableWorkout = {
-                //id: _user.$id,
+                id: _workout.$id,
                 title: _workout.title,
                 type: _workout.type
             }
@@ -926,6 +926,15 @@
             console.log('wrkOUT', _workout);
             workouts.createWorkout(_workout);
         };
+
+
+        wc.saveWorkout = function() {
+            workouts.saveWorkout(wc.editableWorkout)
+                .then(function(){
+                    // wc.cancelWorkout();
+                });
+        };
+
 
         wc.removeWorkout = function(_workout) {
             console.log('removeWorkout', _workout);
@@ -969,7 +978,7 @@
         }
 
 
-        function saveWorkouts(_workout) {
+        function saveWorkout(_workout) {
             var wrkRef = $firebaseObject(exRef.child(_workout.id));
 
             return wrkRef.$loaded(function(_workoutDB) {

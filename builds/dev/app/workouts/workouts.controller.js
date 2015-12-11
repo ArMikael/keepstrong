@@ -19,7 +19,7 @@
 
             wc.editFormShow = true;
             wc.editableWorkout = {
-                //id: _user.$id,
+                id: _workout.$id,
                 title: _workout.title,
                 type: _workout.type
             }
@@ -29,6 +29,15 @@
             console.log('wrkOUT', _workout);
             workouts.createWorkout(_workout);
         };
+
+
+        wc.saveWorkout = function() {
+            workouts.saveWorkout(wc.editableWorkout)
+                .then(function(){
+                    // wc.cancelWorkout();
+                });
+        };
+
 
         wc.removeWorkout = function(_workout) {
             console.log('removeWorkout', _workout);
