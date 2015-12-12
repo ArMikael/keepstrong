@@ -15,7 +15,7 @@
 
         var service = {
             getAllWorkouts: getAllWorkouts,
-            saveWorkouts: saveWorkouts,
+            saveWorkout: saveWorkout,
             createWorkout: createWorkout,
             deleteWorkout: deleteWorkout
         };
@@ -29,7 +29,7 @@
 
 
         function saveWorkout(_workout) {
-            var wrkRef = $firebaseObject(exRef.child(_workout.id));
+            var wrkRef = $firebaseObject(workoutsRef.child(_workout.id));
 
             return wrkRef.$loaded(function(_workoutDB) {
                 _workoutDB.title = _workout.title;
