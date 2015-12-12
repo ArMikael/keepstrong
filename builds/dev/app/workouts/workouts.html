@@ -2,36 +2,16 @@
     <h2>Workouts</h2>
     <p>Here you can check all your workouts.</p>
 
-
-    <div class="training-block">
-        <h3>Beginner's Training</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis dolores expedita non suscipit veniam vero.</p>
-    </div>
-
-    <div class="training-block">
-        <h3>Advanced Training</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis dolores expedita non suscipit veniam vero.</p>
-    </div>
-
-    <div class="training-block">
-        <h3>Beginner's Training</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis dolores expedita non suscipit veniam vero.</p>
-    </div>
-
-    <div class="training-block">
-        <h3>Beginner's Training</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis dolores expedita non suscipit veniam vero.</p>
-    </div>
-
-
     <pre>{{wc.editableWorkout}}</pre>
 
     <h2>Workouts from server</h2>
     <div class="training-block" ng-repeat="workout in wc.workouts" ng-click="wc.editWorkout(workout)">
-        <h3 contenteditable="true">{{workout.title}}
+        <h3>{{workout.title}}
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
         </h3>
         <p>{{workout.type}}</p>
+        <p>{{workout.exercises}}</p>
+        <div kpstr-progress></div>
     </div>
 
 
@@ -43,12 +23,22 @@
             <input type="text" class="form-control" id="workoutTitle" placeholder="Title"
                    ng-model="wc.editableWorkout.title">
         </div>
+
         <div class="form-group">
             <label for="workoutType">Type</label>
             <input type="text" class="form-control" id="workoutType" placeholder="Workout Type"
                    ng-model="wc.editableWorkout.type">
         </div>
-        <button class="btn btn-primary" ng-click="wc.createWorkout(wc.editableWorkout)">Create user</button>
+
+
+        <div class="form-group">
+            <label for="workoutExercises">Included exercises</label>
+            <input type="text" class="form-control" id="workoutExercises" placeholder="Exercises"
+                   ng-model="wc.editableWorkout.exercises">
+        </div>
+
+
+        <button class="btn btn-primary" ng-click="wc.createWorkout(wc.editableWorkout)">Create Workout</button>
 
         <button class="btn btn-success" ng-click="wc.saveWorkout()">Save</button>
         <button class="btn btn-default" ng-click="wc.cancelEditWorkout()">Cancel</button>

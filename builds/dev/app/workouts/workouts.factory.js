@@ -34,6 +34,7 @@
             return wrkRef.$loaded(function(_workoutDB) {
                 _workoutDB.title = _workout.title;
                 _workoutDB.type = _workout.type;
+                _workoutDB.exercises =  _workout.exercises;
                 return wrkRef.$save();
             });
         }
@@ -42,7 +43,8 @@
             console.log('createWorkout workout: ',_workout);
             return $firebaseArray(workoutsRef).$add({
                 title: _workout.title,
-                type: _workout.type
+                type: _workout.type,
+                exercises: _workout.exercises
             }).then(function(_ref) {
                 return $firebaseObject(_ref).$loaded();
             });

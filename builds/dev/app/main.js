@@ -11,7 +11,8 @@
             'kpStr.exercises',
             'kpStr.registration',
             'kpStr.about',
-            'kpStr.profile'
+            'kpStr.profile',
+            'kpStr.progress'
     ])
         .constant('FURL', 'https://keepstrong.firebaseio.com/')
         .config(MainConfig)

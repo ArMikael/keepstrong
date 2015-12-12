@@ -90,3 +90,27 @@
 	border-radius: 50%;
   }
 }
+
+
+// Progress Directive
+progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 370px;
+  height: 6px;
+  color: #3a9cc8;
+  background-color: #fff;
+}
+
+progress::-webkit-progress-value {
+  background-color: #3a9cc8;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #e1e0d7;
+}
+
+progress::-moz-progress-bar {
+  background-color: #3a9cc8;
+}

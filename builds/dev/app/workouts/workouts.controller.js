@@ -21,7 +21,8 @@
             wc.editableWorkout = {
                 id: _workout.$id,
                 title: _workout.title,
-                type: _workout.type
+                type: _workout.type,
+                exercises: _workout.exercises
             }
         };
 
@@ -34,8 +35,20 @@
         wc.saveWorkout = function() {
             workouts.saveWorkout(wc.editableWorkout)
                 .then(function(){
-                    // wc.cancelWorkout();
+                     wc.cancelEditWorkout();
                 });
+        };
+
+
+        wc.cancelEditWorkout = function() {
+            wc.editFormShow = false;
+
+            wc.editableWorkout = {
+                id: null,
+                title: null,
+                type: null,
+                exercises: null
+            };
         };
 
 

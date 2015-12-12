@@ -6,6 +6,8 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     ngAnnotate = require('gulp-ng-annotate'),
     webserver = require('gulp-webserver');
+    //plumber = require('gulp-plumber'),
+    //coffee = require('gulp-coffee');
 
 gulp.task('js',function(){
   gulp.src([
@@ -15,6 +17,8 @@ gulp.task('js',function(){
     .pipe(concat('app.js'))
     .pipe(ngAnnotate())
     // .pipe(uglify())
+    //.pipe(plumber())
+    //.pipe(coffee())
     .pipe(gulp.dest('builds/dev'));
   gulp.src([
       'bower_components/angular/angular.js',
