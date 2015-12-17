@@ -9,9 +9,9 @@
         <h3>{{workout.title}}
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
         </h3>
-        <p>{{workout.type}}</p>
-        <p>{{workout.exercises}}</p>
-        <div kpstr-progress></div>
+        <i>{{workout.type}}</i>
+        <p class="ex-progress">{{workout.exercises}}</p>
+        <div kpstr-progress max="100" val="30"></div>
     </div>
 
 
