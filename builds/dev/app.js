@@ -2,6 +2,7 @@
     'use strict';
 
     angular.module('kpStr', [
+            'ngAnimate',
             'ui.router',
             'ui.bootstrap',
             'kpStr.home',
@@ -300,10 +301,11 @@
         var directive = {
             restrict: 'EAC',
             scope: {
-                max: '='
+                max: '@'
             },
+            //scope: true,
             link: link,
-            replace: true,
+            //replace: true,
             templateUrl: 'app/progress/progress.html'
         };
 
@@ -311,16 +313,22 @@
 
         function link(scope, elem, attrs) {
             console.log("DIRECTIVE", scope, elem, attrs)
-            var parent = elem.parent();
-            console.log('parent', elem.parent());
-            console.log('HA', parent.find('p'));
-            console.log('val', parent.find('p').html());
-            //scope.exercisesCount = scope.max.split(',').length;
-            //scope.exercisesCount = 20;
-            //console.log('exs length', scope.exercisesCount.length);
-            //console.log('MAX: ', scope.exercisesCount);
+            scope.workout.type = "another";
 
-            console.log('exerciseProgress directive link', attrs);
+            scope.max = 200;
+            //console.log('value', attrs.val);
+            //attrs.value = 60;
+
+            //var parent = elem.parent();
+            //console.log('parent', elem.parent());
+            //console.log('HA', parent.find('p'));
+            //console.log('val', parent.find('p').html());
+            ////scope.exercisesCount = scope.max.split(',').length;
+            ////scope.exercisesCount = 20;
+            ////console.log('exs length', scope.exercisesCount.length);
+            ////console.log('MAX: ', scope.exercisesCount);
+            //
+            //console.log('exerciseProgress directive link', attrs);
 
 
         }

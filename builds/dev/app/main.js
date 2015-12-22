@@ -2,6 +2,7 @@
     'use strict';
 
     angular.module('kpStr', [
+            'ngAnimate',
             'ui.router',
             'ui.bootstrap',
             'kpStr.home',
