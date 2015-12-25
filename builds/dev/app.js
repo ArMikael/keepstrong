@@ -163,6 +163,11 @@
     dbcFactory.$inject = ["FURL", "$firebaseAuth"];
 
 })();
+/**
+ * Created by michaeltreser on 25/12/15.
+ */
+
+
 (function() {
     'use strict';
 
@@ -178,6 +183,8 @@
         $rootScope.currentPage = 'exercises';
 
         ec.message = "Let's start with some exercises!";
+
+
     }
     ExercisesController.$inject = ["$rootScope"];
 
@@ -1045,7 +1052,7 @@
             return wrkRef.$loaded(function(_workoutDB) {
                 _workoutDB.title = _workout.title;
                 _workoutDB.type = _workout.type;
-                _workoutDB.exercises =  _workout.exercises;
+                _workoutDB.exercises = _workout.exercises.split(',');
                 return wrkRef.$save();
             });
         }
@@ -1055,8 +1062,9 @@
             return $firebaseArray(workoutsRef).$add({
                 title: _workout.title,
                 type: _workout.type,
-                exercises: _workout.exercises
+                exercises: _workout.exercises.split(',')
             }).then(function(_ref) {
+                console.log(exercises);
                 return $firebaseObject(_ref).$loaded();
             });
         }
