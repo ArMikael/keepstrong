@@ -1,1 +1,8 @@
 <h2>Strength</h2>
+<div class="training-block" ng-repeat="exercise in ec.exercises" ng-click="ec.editExercise(exercise)">
+    <h3>{{exercise.title}}
+        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+    </h3>
+    <p class="ex-progress">{{exercise.count}}</p>
+    <progress max="100" value="50"></progress>
+</div>

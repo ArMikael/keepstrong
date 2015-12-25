@@ -163,30 +163,13 @@
     dbcFactory.$inject = ["FURL", "$firebaseAuth"];
 
 })();
-/**
- * Created by michaeltreser on 25/12/15.
- */
-
-
 (function() {
     'use strict';
 
-    angular.module('kpStr.exercises', [])
-        .config(ExercisesConfig)
-        .controller('ExercisesCtrl', ExercisesController);
-
-
-    // @ngInject
-    function ExercisesController($rootScope) {
-        var ec = this;
-
-        $rootScope.currentPage = 'exercises';
-
-        ec.message = "Let's start with some exercises!";
-
-
-    }
-    ExercisesController.$inject = ["$rootScope"];
+    angular.module('kpStr.exercises', [
+        'dbc'
+    ])
+        .config(ExercisesConfig);
 
 
     // @ngInject
@@ -223,6 +206,38 @@
 })();
 
 
+(function(){
+    "use strict";
+
+    angular.module('kpStr.exercises')
+        .controller('ExercisesCtrl', ExercisesController);
+
+
+    // @ngInject
+    function ExercisesController($rootScope) {
+        var ec = this;
+
+        $rootScope.currentPage = 'exercises';
+
+        ec.message = "Let's start with some exercises!";
+
+    }
+    ExercisesController.$inject = ["$rootScope"];
+
+})();
+(function(){
+    "use strict";
+
+    angular.module('kpStr.exercises')
+        .factory('exercisesFactory', exercisesFactory);
+
+    // @ngInject
+    function exercisesFactory(dbc) {
+        
+    }
+    exercisesFactory.$inject = ["dbc"];
+
+})();
 (function(){
     "use strict";
 
