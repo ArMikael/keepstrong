@@ -41,6 +41,9 @@
     font-size: 18px;
     color: #228B22; }
 
+.create-user {
+  float: right; }
+
 .training-block {
   width: 400px;
   height: auto;
@@ -75,6 +78,31 @@
 
 .progress-inner {
   background-color: #3a9cc8; }
+
+.animate-show {
+  transition: all linear 1s;
+  opacity: 1; }
+
+.animate-show.ng-hide {
+  opacity: 0; }
+
+.repeat-item.ng-enter,
+.repeat-item.ng-move {
+  transition: 1s linear all;
+  opacity: 0; }
+
+.repeat-item.ng-enter.ng-enter-active,
+.repeat-item.ng-move.ng-move-active {
+  opacity: 1; }
+
+.repeat-item.ng-leave {
+  animation: 1s leaving_animation; }
+
+@keyframes leaving_animation {
+  from {
+    opacity: 1; }
+  to {
+    opacity: 0; } }
 
 h3 {
   margin: 0;

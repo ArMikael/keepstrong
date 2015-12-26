@@ -18,7 +18,10 @@
 <pre>{{uc.editableUser | json}}</pre>
 <pre>{{editUser | json}}</pre>
 
-<button class="btn btn-primary" ng-click="uc.createUser()">Create user</button>
+<label for="findUser"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></label>
+<input type="search" id="findUser" value="" ng-model="userSearch" />
+<button class="create-user btn btn-primary" ng-click="uc.createUser()">Create user</button>
+
 
 <table class="table table-hover">
 	<thead>
@@ -33,7 +36,7 @@
 	</thead>
 
 	<tbody>
-		<tr ng-repeat="user in uc.users"
+		<tr class="repeat-item" ng-repeat="user in uc.users | filter:userSearch"
 				ng-click="uc.editUser(user)">
 			<td>{{$index +1}}</td>
 			<td>{{user.name}}</td>
