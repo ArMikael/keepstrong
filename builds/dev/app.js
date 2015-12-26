@@ -112,62 +112,11 @@
     AboutController.$inject = ["$scope", "$rootScope", "$interval"];
 
 })();
-(function () {
-    'use strict';
-
-    // Data Base Connection to Firebase
-    angular.module('kpStr.dbc', [
-        'firebase'
-    ])
-        .factory('dbc', dbcFactory);
-
-    // @ngInject
-    function dbcFactory(FURL, $firebaseAuth) {
-        var ref = new Firebase(FURL);
-        var auth = $firebaseAuth(ref);
-
-        var service = {
-            getRef: getRef,
-            getAuth: getAuth,
-            get$Auth: get$Auth,
-            isLoggedIn: isLoggedIn
-        };
-
-
-        // Return reference to the firebase db
-        function getRef() {
-            return ref;
-        }
-
-        // Native method from Firebase (faster then Angular-fire method)
-        function getAuth() {
-            return ref.getAuth();
-        }
-
-        // Method from Angular-Fire
-        function get$Auth() {
-            return auth;
-        }
-
-        // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
-        function isLoggedIn() {
-            return auth.$getAuth();
-        }
-
-        // service.getRef = function(){
-        //     return ref;
-        // };
-
-        return service;
-    }
-    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
-
-})();
 (function() {
     'use strict';
 
     angular.module('kpStr.exercises', [
-        'dbc'
+        'kpStr.dbc'
     ])
         .config(ExercisesConfig);
 
@@ -233,45 +182,13 @@
 
     // @ngInject
     function exercisesFactory(dbc) {
-        
+        var service = {};
+
+
+        return service;
     }
     exercisesFactory.$inject = ["dbc"];
 
-})();
-(function(){
-    "use strict";
-
-    angular.module('kpStr.home', [])
-        .config(HomeConfig);
-
-    // @ngInject
-    function HomeConfig($stateProvider) {
-        $stateProvider
-            .state('home', {
-                url: '/',
-                controller: 'HomeCtrl',
-                controllerAs: 'hc',
-                templateUrl: 'app/home/home.html',
-                authenticate: false
-
-            })
-    }
-    HomeConfig.$inject = ["$stateProvider"];
-
-})();
-(function(){
-    "use strict";
-    
-    angular.module('kpStr.home')
-        .controller('HomeCtrl', HomeController);
-    
-    // @ngInject
-    function HomeController() {
-        var hc = this;
-
-        console.log('HomeController');
-    }
-    
 })();
 (function(){
     'use strict';
@@ -314,6 +231,202 @@
 (function(){
     "use strict";
 
+    angular.module('kpStr.home', [])
+        .config(HomeConfig);
+
+    // @ngInject
+    function HomeConfig($stateProvider) {
+        $stateProvider
+            .state('home', {
+                url: '/',
+                controller: 'HomeCtrl',
+                controllerAs: 'hc',
+                templateUrl: 'app/home/home.html',
+                authenticate: false
+
+            })
+    }
+    HomeConfig.$inject = ["$stateProvider"];
+
+})();
+(function(){
+    "use strict";
+    
+    angular.module('kpStr.home')
+        .controller('HomeCtrl', HomeController);
+    
+    // @ngInject
+    function HomeController() {
+        var hc = this;
+
+        console.log('HomeController');
+    }
+    
+})();
+/**
+ * Created by michaeltreser on 11/14/15.
+ */
+
+;(function() {
+    'use strict';
+
+    angular.module('kpStr.stats', [])
+        .config(StatsConfig)
+        .factory('StatsFactory', StatsFactory)
+        .controller('StatsCtrl', StatsController)
+        .filter('toLowerCase', toLowerCase);
+        //.filter('timeFromNow', timeFromNow);
+
+
+    function StatsFactory($http) {
+        var dataFactory = {};
+
+        console.log('factory');
+        dataFactory.getData = function(url) {
+            return $http.get(url);
+        };
+
+        return dataFactory;
+    }
+    StatsFactory.$inject = ["$http"];
+
+
+    //function StatsFactory($http) {
+    //    var dataFactory = {
+    //        data: {}
+    //    };
+    //
+    //    dataFactory.getData = function() {
+    //        return $http.get('app/statistics/persons.json')
+    //            .then(function(response) {
+    //                console.log('Factory data: ', response.data);
+    //                dataFactory.data = response.data;
+    //            });
+    //    };
+    //
+    //    return dataFactory;
+    //
+    //}
+
+
+    /**
+     * Stats Controller
+     */
+
+    // @ngInject
+    function StatsController($rootScope, StatsFactory) {
+        var sc = this;
+
+        $rootScope.currentPage = 'statistics';
+        sc.message = 'Statistics page!';
+
+        //StatsFactory.getData();
+        //console.log('dada', StatsFactory.data);
+        //sc.persons = StatsFactory.data;
+
+        //sc.persons = StatsFactory.getData();
+
+        StatsFactory.getData('app/statistics/persons.json')
+            .then(function(response) {
+                console.log(response.data);
+                sc.persons = response.data;
+        });
+
+        console.log('sc.persons', sc.persons);
+    }
+    StatsController.$inject = ["$rootScope", "StatsFactory"];
+
+
+    // @ngInject
+    function StatsConfig($stateProvider) {
+        $stateProvider
+            .state('statistics', {
+                url: '/statistics',
+                controller: 'StatsCtrl',
+                controllerAs: 'sc',
+                templateUrl: 'app/statistics/statistics.html'
+            });
+    }
+    StatsConfig.$inject = ["$stateProvider"];
+
+
+
+    /* Custom Filters */
+
+    // @ngInject
+    function toLowerCase() {
+        return function(text) {
+            var filtered = text.toLowerCase();
+
+            return filtered;
+        }
+    }
+
+
+    // @ngInject
+    function timeFromNow() {
+        return function(date) {
+            var currentTime = Date.now(),
+                timeDiff = currentTime - Date.parse(date),
+                filteredDate;
+
+            // Time variables
+            var seconds = Math.round(timeDiff) / 1000,
+                minutes = Math.round(seconds) / 60,
+                hours = Math.round(minutes) / 60,
+                days = Math.round(hours) / 24,
+                months = Math.round(days) / 30,
+                years = Math.round(days) / 365;
+
+            console.log('registered', date);
+            console.log('currentTime', currentTime);
+            console.log('timeDiff', timeDiff);
+
+            var timeStrings = {
+                seconds: 'Less Than a Minute Ago',
+                minute: 'About a Minute Ago',
+                minutes: ' Minutes Ago',
+                hour: 'About an Hour Ago',
+                hours: ' Hours Ago',
+                day: ' a Day Ago',
+                days: ' Days Ago',
+                month: ' About a Month Ago',
+                months: ' Months Ago',
+                year: ' About a Year Ago',
+                years: ' Years Ago'
+            };
+
+
+            //filteredDate = timeStrings.seconds ||
+            //    minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
+            //    minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
+            //    hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
+            //    hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
+            //    days == 1 ? timeStrings.day : hours + timeStrings.hours ||
+            //    days > 1 ? days + timeStrings.days : timeStrings.day ||
+            //    months == 1 ? timeStrings.month : days + timeStrings.days ||
+            //    months > 1 ? months + timeStrings.months : timeStrings.month;
+
+            filteredDate =
+                months > 1 ? months + timeStrings.months : timeStrings.month ||
+                months == 1 ? timeStrings.month : days + timeStrings.days ||
+                days > 1 ? days + timeStrings.days : timeStrings.day ||
+                days == 1 ? timeStrings.day : hours + timeStrings.hours ||
+                hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
+                hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
+                minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
+                minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
+                timeStrings.seconds;
+
+            return filteredDate;
+        }
+    }
+
+
+})();
+(function(){
+    "use strict";
+
     angular.module('kpStr.progress', [])
         .directive('kpstrProgress', kpstrProgress);
 
@@ -322,12 +435,13 @@
     function kpstrProgress() {
         var directive = {
             restrict: 'EAC',
-            scope: {
+            // scope: true,
+            // scope: {}, // Isolated scope
+            scope: { //
                 max: '@'
             },
-            //scope: true,
             link: link,
-            //replace: true,
+            // replace: true,
             templateUrl: 'app/progress/progress.html'
         };
 
@@ -355,6 +469,263 @@
 
         }
     }
+
+})();
+;(function(){
+	'use strict';
+
+	angular.module('kpStr.users', [
+				'kpStr.dbc'
+			])
+		.config(usersConfig);
+
+		console.log('.users');
+
+		// @ngInject
+		function usersConfig($stateProvider) {
+			console.log('kpStr.users');
+
+			$stateProvider
+				.state('users', {
+					url: '/users',
+					controller: 'UsersCtrl',
+					controllerAs: 'uc',
+					templateUrl: 'app/users/users.html',
+					authenticate: false,
+					resolve: {
+						auth: /* @ngInject */ ["dbc", "$q", "$state", function(dbc, $q, $state) {
+							var deferred = $q.defer();
+							setTimeout(function(){
+								console.log('Resolve auth.', dbc.get$Auth().$getAuth());
+								if (dbc.get$Auth().$getAuth() !== null) {
+									console.log('Resolve!');
+									deferred.resolve();
+								} else {
+									console.log('Reject!');
+									$state.go('signin');
+									deferred.reject();
+								}
+							}, 50);
+
+							return deferred.promise;
+						}]
+					}
+				})
+		}
+		usersConfig.$inject = ["$stateProvider"];
+
+})();
+(function(){
+	'use strict';
+
+	angular.module('kpStr.users')
+		.controller('UsersCtrl', UsersController);
+
+    /**
+     * Users Controller
+     */
+
+	// @ngInject
+	function UsersController($rootScope, usersFactory) {
+		var uc = this;
+		$rootScope.currentPage = 'users';
+
+		uc.editFormShow = false;
+
+		uc.editUser = function(_user) {
+			console.log(_user);
+			uc.editFormShow = true;
+			uc.editableUser = {
+				id: _user.$id,
+				name: _user.name,
+				email: _user.email
+			}
+		};
+
+		uc.saveUser = function() {
+			usersFactory.saveUser(uc.editableUser)
+				.then(function() {
+					uc.cancelEditUser();
+				});
+		};
+
+		uc.removeUser = function() {
+			usersFactory.deleteUser(uc.editableUser.id)
+				.then(function(){
+					uc.cancelEditUser();
+				});
+		};
+
+		uc.cancelEditUser = function() {
+			uc.editFormShow = false;
+
+			uc.editableUser = {
+				id: null,
+				name: null,
+				email: null
+			};
+		};
+
+		uc.createUser = function() {
+			usersFactory.createNewUser()
+				.then(function(_d){
+					uc.editUser(_d);
+				});
+		};
+
+		uc.cancelEditUser();
+		uc.users = [];
+
+		usersFactory.getAllUsers().then(function(_response){
+			console.log('response', _response)
+			uc.users = _response;
+		});
+
+		//usersFactory.getUser(0).then(function(_response){
+		//	console.log('getUser response', _response);
+        //
+		//	uc.user = _response;
+		//})
+	}
+	UsersController.$inject = ["$rootScope", "usersFactory"];
+
+})();
+(function(){
+	'use strict';
+
+	angular.module('kpStr.users')
+		.factory('usersFactory', usersFactory);
+
+
+	// @ngInject
+	function usersFactory($rootScope, dbc, $firebaseArray, $firebaseObject) {
+		var ref = dbc.getRef();
+		var usersRef = ref.child('users');
+
+		var service = {
+			getAllUsers: getAllUsers,
+			getUser: getUser,
+			saveUser: saveUser,
+			deleteUser: deleteUser,
+			createNewUser: createNewUser
+		};
+
+		$rootScope.$broadcast('UsersBroadcast', {msg: "Entered to the Users.Factory"});
+
+
+		function getAllUsers() {
+			return $firebaseArray(usersRef).$loaded(function(_data){
+				console.log('Got all Users from Firebase');
+
+				return _data;
+			});
+		}
+
+
+		//function getUser(id) {
+		//	console.log('ID', id);
+		//	return $firebaseArray(ref.child(id)).$loaded(function(_data){
+		//		console.log('User from Firebase', _data);
+        //
+		//		return _data;
+		//	});
+		//}
+
+		function getUser(id) {
+			console.log('ID', id);
+			return $firebaseObject(usersRef.child(id)).$loaded(function(_data){
+				console.log('User from Firebase', _data);
+
+				$rootScope.$broadcast('UsersBroadcast', {msg: "Got specific user!"});
+
+				return _data;
+			});
+		}
+
+		function saveUser(_user) {
+			console.log('Saving user in factory');
+
+			var user = $firebaseObject(usersRef.child(_user.id));
+			return user.$loaded(function(_dbuser){
+				_dbuser.name = _user.name;
+				_dbuser.email = _user.email;
+				return _dbuser.$save();
+			});
+		}
+
+		function deleteUser (_id) {
+			return $firebaseObject(usersRef.child(_id)).$remove();
+		}
+
+		function createNewUser() {
+			return $firebaseArray(usersRef).$add({
+				name: '',
+				email: '',
+				registered: Firebase.ServerValue.TIMESTAMP,
+				last_visit: Firebase.ServerValue.TIMESTAMP
+			}).then(function(usersRef){
+				return $firebaseObject(usersRef).$loaded();
+			});
+		}
+
+
+			//var deferred = $q.defer();
+			//return deferred.promise;
+
+		return service;
+	}
+	usersFactory.$inject = ["$rootScope", "dbc", "$firebaseArray", "$firebaseObject"];
+	
+})();
+(function () {
+    'use strict';
+
+    // Data Base Connection to Firebase
+    angular.module('kpStr.dbc', [
+        'firebase'
+    ])
+        .factory('dbc', dbcFactory);
+
+    // @ngInject
+    function dbcFactory(FURL, $firebaseAuth) {
+        var ref = new Firebase(FURL);
+        var auth = $firebaseAuth(ref);
+
+        var service = {
+            getRef: getRef,
+            getAuth: getAuth,
+            get$Auth: get$Auth,
+            isLoggedIn: isLoggedIn
+        };
+
+
+        // Return reference to the firebase db
+        function getRef() {
+            return ref;
+        }
+
+        // Native method from Firebase (faster then Angular-fire method)
+        function getAuth() {
+            return ref.getAuth();
+        }
+
+        // Method from Angular-Fire
+        function get$Auth() {
+            return auth;
+        }
+
+        // Checks if user is logged in. Returns true or false. Add variables to Local Storage.
+        function isLoggedIn() {
+            return auth.$getAuth();
+        }
+
+        // service.getRef = function(){
+        //     return ref;
+        // };
+
+        return service;
+    }
+    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
 
 })();
 (function(){
@@ -574,373 +945,6 @@
     }
     registrationFactory.$inject = ["dbc", "$rootScope", "usersFactory", "$firebaseObject"];
 
-})();
-/**
- * Created by michaeltreser on 11/14/15.
- */
-
-;(function() {
-    'use strict';
-
-    angular.module('kpStr.stats', [])
-        .config(StatsConfig)
-        .factory('StatsFactory', StatsFactory)
-        .controller('StatsCtrl', StatsController)
-        .filter('toLowerCase', toLowerCase);
-        //.filter('timeFromNow', timeFromNow);
-
-
-    function StatsFactory($http) {
-        var dataFactory = {};
-
-        console.log('factory');
-        dataFactory.getData = function(url) {
-            return $http.get(url);
-        };
-
-        return dataFactory;
-    }
-    StatsFactory.$inject = ["$http"];
-
-
-    //function StatsFactory($http) {
-    //    var dataFactory = {
-    //        data: {}
-    //    };
-    //
-    //    dataFactory.getData = function() {
-    //        return $http.get('app/statistics/persons.json')
-    //            .then(function(response) {
-    //                console.log('Factory data: ', response.data);
-    //                dataFactory.data = response.data;
-    //            });
-    //    };
-    //
-    //    return dataFactory;
-    //
-    //}
-
-
-    /**
-     * Stats Controller
-     */
-
-    // @ngInject
-    function StatsController($rootScope, StatsFactory) {
-        var sc = this;
-
-        $rootScope.currentPage = 'statistics';
-        sc.message = 'Statistics page!';
-
-        //StatsFactory.getData();
-        //console.log('dada', StatsFactory.data);
-        //sc.persons = StatsFactory.data;
-
-        //sc.persons = StatsFactory.getData();
-
-        StatsFactory.getData('app/statistics/persons.json')
-            .then(function(response) {
-                console.log(response.data);
-                sc.persons = response.data;
-        });
-
-        console.log('sc.persons', sc.persons);
-    }
-    StatsController.$inject = ["$rootScope", "StatsFactory"];
-
-
-    // @ngInject
-    function StatsConfig($stateProvider) {
-        $stateProvider
-            .state('statistics', {
-                url: '/statistics',
-                controller: 'StatsCtrl',
-                controllerAs: 'sc',
-                templateUrl: 'app/statistics/statistics.html'
-            });
-    }
-    StatsConfig.$inject = ["$stateProvider"];
-
-
-
-    /* Custom Filters */
-
-    // @ngInject
-    function toLowerCase() {
-        return function(text) {
-            var filtered = text.toLowerCase();
-
-            return filtered;
-        }
-    }
-
-
-    // @ngInject
-    function timeFromNow() {
-        return function(date) {
-            var currentTime = Date.now(),
-                timeDiff = currentTime - Date.parse(date),
-                filteredDate;
-
-            // Time variables
-            var seconds = Math.round(timeDiff) / 1000,
-                minutes = Math.round(seconds) / 60,
-                hours = Math.round(minutes) / 60,
-                days = Math.round(hours) / 24,
-                months = Math.round(days) / 30,
-                years = Math.round(days) / 365;
-
-            console.log('registered', date);
-            console.log('currentTime', currentTime);
-            console.log('timeDiff', timeDiff);
-
-            var timeStrings = {
-                seconds: 'Less Than a Minute Ago',
-                minute: 'About a Minute Ago',
-                minutes: ' Minutes Ago',
-                hour: 'About an Hour Ago',
-                hours: ' Hours Ago',
-                day: ' a Day Ago',
-                days: ' Days Ago',
-                month: ' About a Month Ago',
-                months: ' Months Ago',
-                year: ' About a Year Ago',
-                years: ' Years Ago'
-            };
-
-
-            //filteredDate = timeStrings.seconds ||
-            //    minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
-            //    minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
-            //    hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
-            //    hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
-            //    days == 1 ? timeStrings.day : hours + timeStrings.hours ||
-            //    days > 1 ? days + timeStrings.days : timeStrings.day ||
-            //    months == 1 ? timeStrings.month : days + timeStrings.days ||
-            //    months > 1 ? months + timeStrings.months : timeStrings.month;
-
-            filteredDate =
-                months > 1 ? months + timeStrings.months : timeStrings.month ||
-                months == 1 ? timeStrings.month : days + timeStrings.days ||
-                days > 1 ? days + timeStrings.days : timeStrings.day ||
-                days == 1 ? timeStrings.day : hours + timeStrings.hours ||
-                hours > 1 ? hours + timeStrings.hours : timeStrings.hour ||
-                hours == 1 ? timeStrings.hour : minutes + timeStrings.minutes ||
-                minutes > 1 ? minutes + timeStrings.minutes : timeStrings.minute ||
-                minutes == 1 ? timeStrings.minute : timeStrings.seconds ||
-                timeStrings.seconds;
-
-            return filteredDate;
-        }
-    }
-
-
-})();
-;(function(){
-	'use strict';
-
-	angular.module('kpStr.users', [
-				'kpStr.dbc'
-			])
-		.config(usersConfig);
-
-		console.log('.users');
-
-		// @ngInject
-		function usersConfig($stateProvider) {
-			console.log('kpStr.users');
-
-			$stateProvider
-				.state('users', {
-					url: '/users',
-					controller: 'UsersCtrl',
-					controllerAs: 'uc',
-					templateUrl: 'app/users/users.html',
-					authenticate: false,
-					resolve: {
-						auth: /* @ngInject */ ["dbc", "$q", "$state", function(dbc, $q, $state) {
-							var deferred = $q.defer();
-							setTimeout(function(){
-								console.log('Resolve auth.', dbc.get$Auth().$getAuth());
-								if (dbc.get$Auth().$getAuth() !== null) {
-									console.log('Resolve!');
-									deferred.resolve();
-								} else {
-									console.log('Reject!');
-									$state.go('signin');
-									deferred.reject();
-								}
-							}, 50);
-
-							return deferred.promise;
-						}]
-					}
-				})
-		}
-		usersConfig.$inject = ["$stateProvider"];
-
-})();
-(function(){
-	'use strict';
-
-	angular.module('kpStr.users')
-		.controller('UsersCtrl', UsersController);
-
-    /**
-     * Users Controller
-     */
-
-	// @ngInject
-	function UsersController($rootScope, usersFactory) {
-		var uc = this;
-		$rootScope.currentPage = 'users';
-
-		uc.editFormShow = false;
-
-		uc.editUser = function(_user) {
-			console.log(_user);
-			uc.editFormShow = true;
-			uc.editableUser = {
-				id: _user.$id,
-				name: _user.name,
-				email: _user.email
-			}
-		};
-
-		uc.saveUser = function() {
-			usersFactory.saveUser(uc.editableUser)
-				.then(function() {
-					uc.cancelEditUser();
-				});
-		};
-
-		uc.removeUser = function() {
-			usersFactory.deleteUser(uc.editableUser.id)
-				.then(function(){
-					uc.cancelEditUser();
-				});
-		};
-
-		uc.cancelEditUser = function() {
-			uc.editFormShow = false;
-
-			uc.editableUser = {
-				id: null,
-				name: null,
-				email: null
-			};
-		};
-
-		uc.createUser = function() {
-			usersFactory.createNewUser()
-				.then(function(_d){
-					uc.editUser(_d);
-				});
-		};
-
-		uc.cancelEditUser();
-		uc.users = [];
-
-		usersFactory.getAllUsers().then(function(_response){
-			console.log('response', _response)
-			uc.users = _response;
-		});
-
-		//usersFactory.getUser(0).then(function(_response){
-		//	console.log('getUser response', _response);
-        //
-		//	uc.user = _response;
-		//})
-	}
-	UsersController.$inject = ["$rootScope", "usersFactory"];
-
-})();
-(function(){
-	'use strict';
-
-	angular.module('kpStr.users')
-		.factory('usersFactory', usersFactory);
-
-
-	// @ngInject
-	function usersFactory($rootScope, dbc, $firebaseArray, $firebaseObject) {
-		var ref = dbc.getRef();
-		var usersRef = ref.child('users');
-
-		var service = {
-			getAllUsers: getAllUsers,
-			getUser: getUser,
-			saveUser: saveUser,
-			deleteUser: deleteUser,
-			createNewUser: createNewUser
-		};
-
-		$rootScope.$broadcast('UsersBroadcast', {msg: "Entered to the Users.Factory"});
-
-
-		function getAllUsers() {
-			return $firebaseArray(usersRef).$loaded(function(_data){
-				console.log('Got all Users from Firebase');
-
-				return _data;
-			});
-		}
-
-
-		//function getUser(id) {
-		//	console.log('ID', id);
-		//	return $firebaseArray(ref.child(id)).$loaded(function(_data){
-		//		console.log('User from Firebase', _data);
-        //
-		//		return _data;
-		//	});
-		//}
-
-		function getUser(id) {
-			console.log('ID', id);
-			return $firebaseObject(usersRef.child(id)).$loaded(function(_data){
-				console.log('User from Firebase', _data);
-
-				$rootScope.$broadcast('UsersBroadcast', {msg: "Got specific user!"});
-
-				return _data;
-			});
-		}
-
-		function saveUser(_user) {
-			console.log('Saving user in factory');
-
-			var user = $firebaseObject(usersRef.child(_user.id));
-			return user.$loaded(function(_dbuser){
-				_dbuser.name = _user.name;
-				_dbuser.email = _user.email;
-				return _dbuser.$save();
-			});
-		}
-
-		function deleteUser (_id) {
-			return $firebaseObject(usersRef.child(_id)).$remove();
-		}
-
-		function createNewUser() {
-			return $firebaseArray(usersRef).$add({
-				name: '',
-				email: '',
-				registered: Firebase.ServerValue.TIMESTAMP,
-				last_visit: Firebase.ServerValue.TIMESTAMP
-			}).then(function(usersRef){
-				return $firebaseObject(usersRef).$loaded();
-			});
-		}
-
-
-			//var deferred = $q.defer();
-			//return deferred.promise;
-
-		return service;
-	}
-	usersFactory.$inject = ["$rootScope", "dbc", "$firebaseArray", "$firebaseObject"];
-	
 })();
 (function(){
     "use strict";

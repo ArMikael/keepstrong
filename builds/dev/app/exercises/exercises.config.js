@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('kpStr.exercises', [
-        'dbc'
+        'kpStr.dbc'
     ])
         .config(ExercisesConfig);
 

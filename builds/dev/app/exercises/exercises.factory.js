@@ -6,7 +6,10 @@
 
     // @ngInject
     function exercisesFactory(dbc) {
-        
+        var service = {};
+
+
+        return service;
     }
 
 })();

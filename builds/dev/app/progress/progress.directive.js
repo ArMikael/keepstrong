@@ -9,12 +9,13 @@
     function kpstrProgress() {
         var directive = {
             restrict: 'EAC',
-            scope: {
+            // scope: true,
+            // scope: {}, // Isolated scope
+            scope: { //
                 max: '@'
             },
-            //scope: true,
             link: link,
-            //replace: true,
+            // replace: true,
             templateUrl: 'app/progress/progress.html'
         };
 
