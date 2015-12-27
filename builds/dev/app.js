@@ -214,31 +214,127 @@
 
 
     // @ngInject
-    function ExercisesController($rootScope) {
+    function ExercisesController($rootScope, exercises, $log) {
         var ec = this;
 
         $rootScope.currentPage = 'exercises';
 
-        ec.message = "Let's start with some exercises!";
+        exercises.getAllExercises().then(function(_response){
+            console.log('response', _response)
+            ec.exercises = _response;
+        });
+
+
+        ec.editExercise = function(_exercise) {
+            console.log(_exercise);
+
+            ec.editFormShow = true;
+            ec.editableExercise = {
+                id: _exercise.$id,
+                title: _exercise.title,
+                type: _exercise.type,
+                exercises: _exercise.exercises
+            }
+        };
+
+        ec.createExercise = function(_exercise) {
+            $log.debug('creatingExercise CTRL', _exercise);
+            exercises.createExercise(_exercise);
+        };
+
+
+        ec.saveExercise = function() {
+            exercises.saveExercise(ec.editableExercise)
+                .then(function(){
+                    ec.cancelEditExercise();
+                });
+        };
+
+
+        ec.cancelEditExercise = function() {
+            ec.editFormShow = false;
+
+            ec.editableExercise = {
+                id: null,
+                title: null,
+                type: null,
+                exercises: null
+            };
+        };
+
+
+        ec.removeExercise = function(_exercise) {
+            $log.debug('removeExercise', _exercise);
+            exercises.deleteExercise(_exercise);
+        };
+
+        $log.debug('ExercisesController');
 
     }
-    ExercisesController.$inject = ["$rootScope"];
+    ExercisesController.$inject = ["$rootScope", "exercises", "$log"];
 
 })();
 (function(){
     "use strict";
 
     angular.module('kpStr.exercises')
-        .factory('exercisesFactory', exercisesFactory);
+        .factory('exercises', exercisesFactory);
 
     // @ngInject
-    function exercisesFactory(dbc) {
-        var service = {};
+    function exercisesFactory(dbc, $log, $firebaseArray, $firebaseObject) {
+        $log.debug('exercisesFactory');
+
+        var ref = dbc.getRef();
+        var exercisesRef = ref.child('exercises');
 
 
-        return service;
+        var exercises = {
+            getAllExercises: getAllExercises,
+            saveExercise: saveExercise,
+            createExercise: createExercise,
+            deleteExercise: deleteExercise
+        };
+
+
+        function getAllExercises() {
+            return $firebaseArray(exercisesRef).$loaded(function(_data) {
+                $log.debug('Getting exercises from firebase to factory', _data);
+                return _data;
+            });
+        }
+
+
+        function saveExercise(_exercises) {
+            var exRef = $firebaseObject(exercisesRef.child(_exercises.id));
+
+            return exRef.$loaded(function(_exercisesDB) {
+                _exercisesDB.title = _exercise.title;
+                _exercisesDB.type = _exercise.type;
+                return exRef.$save();
+            });
+        }
+
+
+        function createExercise(_exercise) {
+            $log.debug('createExercise exercises: ',_exercise);
+            return $firebaseArray(exercisesRef).$add({
+                title: _exercise.title,
+                type: _exercise.type
+            }).then(function(_ref) {
+                $log.debug(exercises);
+                return $firebaseObject(_ref).$loaded();
+            });
+        }
+
+
+        function deleteExercise(_exercise) {
+            return $firebaseObject(exercisesRef.child(_exercise.id)).$remove();
+        }
+
+
+        return exercises;
     }
-    exercisesFactory.$inject = ["dbc"];
+    exercisesFactory.$inject = ["dbc", "$log", "$firebaseArray", "$firebaseObject"];
 
 })();
 (function(){
@@ -1076,6 +1172,7 @@
             });
         }
 
+
          function createWorkout(_workout) {
             console.log('createWorkout workout: ',_workout);
             return $firebaseArray(workoutsRef).$add({
@@ -1087,6 +1184,7 @@
                 return $firebaseObject(_ref).$loaded();
             });
         }
+
 
         function deleteWorkout(_workout) {
             return $firebaseObject(workoutsRef.child(_workout.id)).$remove();

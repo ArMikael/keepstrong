@@ -2,7 +2,7 @@
     "use strict";
 
     angular.module('kpStr.exercises')
-        .factory('exercisesFactory', exercisesFactory);
+        .factory('exercises', exercisesFactory);
 
     // @ngInject
     function exercisesFactory(dbc, $log, $firebaseArray, $firebaseObject) {
@@ -29,7 +29,7 @@
 
 
         function saveExercise(_exercises) {
-            var exRef = $firebaseObject(workoutsRef.child(_exercises.id));
+            var exRef = $firebaseObject(exercisesRef.child(_exercises.id));
 
             return exRef.$loaded(function(_exercisesDB) {
                 _exercisesDB.title = _exercise.title;

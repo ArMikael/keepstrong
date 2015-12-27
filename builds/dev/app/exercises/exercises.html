@@ -1,6 +1,4 @@
 <div class="exercises">
-    <h2>{{ec.message}}</h2>
-
     <div class="exercises-container">
         <i ng-class="{'bg-danger': $state.includes('exercises.strength'),
                     'bg-success': $state.includes('exercises.endurance'),
@@ -23,16 +21,49 @@
     </div>
 
 
+    <pre>{{ec.editableExercise}}</pre>
 
-
-    <div class="col-md-10 col-lg-12">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. At aut ea exercitationem fugit iste iusto, nihil odit
-        possimus quibusdam reprehenderit, sequi soluta, veniam. At eius, eligendi molestias quod rerum ullam!
+    <h2>Exercise from server</h2>
+    <div class="training-block" ng-repeat="exercise in ec.exercises" ng-click="ec.editExercise(exercise)">
+        <h3>{{exercise.title}}
+            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+        </h3>
+        <i>{{exercise.type}}</i>
     </div>
 
-    <button class="md-fab md-primary md-button md-ink-ripple" type="button" ng-transclude="" aria-label="Use Android">
-        <md-icon md-svg-src="img/icons/android.svg" class="ng-scope ng-isolate-scope" aria-hidden="true"></md-icon>
-        <div class="md-ripple-container"></div>
+
+    <button class="btn btn-primary" ng-model="showEditForm"
+            ng-click="showEditForm = !showEditForm">
+        Add Exercise
     </button>
+
+
+    <div class="exercises-form animate-show" ng-show="showEditForm">
+        <h2>Exercise Editing</h2>
+        <!-- <form  name="addExercise"> -->
+        <form name="editExercise">
+            <div class="form-group">
+                <label for="exerciseTitle">Name</label>
+                <input type="text" class="form-control" id="exerciseTitle" placeholder="Title"
+                       ng-model="ec.editableExercise.title">
+            </div>
+
+            <div class="form-group">
+                <label for="exerciseType">Type</label>
+                <input type="text" class="form-control" id="exerciseType" placeholder="Exercise Type"
+                       ng-model="ec.editableExercise.type">
+            </div>
+
+
+
+            <button class="btn btn-primary" ng-click="ec.createExercise(ec.editableExercise)">Create Exercise</button>
+
+            <button class="btn btn-success" ng-click="ec.saveExercise()">Save</button>
+            <button class="btn btn-default" ng-click="ec.cancelEditExercise()">Cancel</button>
+            <button class="btn btn-danger" ng-click="ec.removeExercise(ec.editableExercise)">Delete</button>
+
+        </form>
+    </div>
+    
 
 </div>
