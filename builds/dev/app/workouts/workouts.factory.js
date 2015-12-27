@@ -39,6 +39,7 @@
             });
         }
 
+
          function createWorkout(_workout) {
             console.log('createWorkout workout: ',_workout);
             return $firebaseArray(workoutsRef).$add({
@@ -50,6 +51,7 @@
                 return $firebaseObject(_ref).$loaded();
             });
         }
+
 
         function deleteWorkout(_workout) {
             return $firebaseObject(workoutsRef.child(_workout.id)).$remove();
