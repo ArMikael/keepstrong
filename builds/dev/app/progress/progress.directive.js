@@ -9,8 +9,9 @@
     function kpstrProgress() {
         var directive = {
             restrict: 'EAC',
-            // scope: true,
-            // scope: {}, // Isolated scope
+            // scope: false, // Shared scope (default) - variables from both scopes available to each other
+            // scope: true, // Inherited scope - variables from directive is not available to the parent scope
+            // scope: {}, // Isolated scope - variables from both scopes are not available to each other
             scope: { //
                 max: '@'
             },

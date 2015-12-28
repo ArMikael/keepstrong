@@ -451,7 +451,8 @@
     function kpstrProgress() {
         var directive = {
             restrict: 'EAC',
-            // scope: true,
+            // scope: false, // Shared scope (default)
+            // scope: true, // Inherited scope
             // scope: {}, // Isolated scope
             scope: { //
                 max: '@'
