@@ -216,24 +216,27 @@
     // @ngInject
     function ExercisesController($rootScope, exercises, $log) {
         var ec = this;
-
         $rootScope.currentPage = 'exercises';
 
+        var counter = {};
+        counter.count = 0;
+        console.log(counter.count);
+
         exercises.getAllExercises().then(function(_response){
-            console.log('response', _response)
+            $log.debug('response', _response)
             ec.exercises = _response;
         });
 
 
         ec.editExercise = function(_exercise) {
-            console.log(_exercise);
+            $log.debug(_exercise);
 
             ec.editFormShow = true;
             ec.editableExercise = {
                 id: _exercise.$id,
                 title: _exercise.title,
                 type: _exercise.type,
-                exercises: _exercise.exercises
+                count: _exercise.count
             }
         };
 
@@ -258,7 +261,7 @@
                 id: null,
                 title: null,
                 type: null,
-                exercises: null
+                count: null
             };
         };
 
@@ -273,6 +276,33 @@
     }
     ExercisesController.$inject = ["$rootScope", "exercises", "$log"];
 
+})();
+(function(){
+    "use strict";
+
+    angular.module('kpStr.exercises')
+        .component('counter', {
+            bindings: {
+                count: '='
+            },
+            controller: function () {
+                function increment() {
+                    this.count++;
+                }
+                function decrement() {
+                    this.count--;
+                }
+                this.increment = increment;
+                this.decrement = decrement;
+            },
+            template: [
+                '<div class="todo">',
+                '<input type="text" ng-model="counter.count">',
+                '<button type="button" ng-click="counter.decrement();">-</button>',
+                '<button type="button" ng-click="counter.increment();">+</button>',
+                '</div>'
+            ].join('')
+        });
 })();
 (function(){
     "use strict";

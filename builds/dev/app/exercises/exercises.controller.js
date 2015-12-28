@@ -8,24 +8,27 @@
     // @ngInject
     function ExercisesController($rootScope, exercises, $log) {
         var ec = this;
-
         $rootScope.currentPage = 'exercises';
 
+        var counter = {};
+        counter.count = 0;
+        console.log(counter.count);
+
         exercises.getAllExercises().then(function(_response){
-            console.log('response', _response)
+            $log.debug('response', _response)
             ec.exercises = _response;
         });
 
 
         ec.editExercise = function(_exercise) {
-            console.log(_exercise);
+            $log.debug(_exercise);
 
             ec.editFormShow = true;
             ec.editableExercise = {
                 id: _exercise.$id,
                 title: _exercise.title,
                 type: _exercise.type,
-                exercises: _exercise.exercises
+                count: _exercise.count
             }
         };
 
@@ -50,7 +53,7 @@
                 id: null,
                 title: null,
                 type: null,
-                exercises: null
+                count: null
             };
         };
 
