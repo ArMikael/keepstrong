@@ -21,6 +21,11 @@
         .controller('MainCtrl', MainController);
 
 
+    angular.element(function() {
+        angular.bootstrap(document.body, ['kpStr']);
+    });
+
+
     // @ngInject
     function MainConfig($urlRouterProvider, $logProvider) {
         $logProvider.debugEnabled(true);

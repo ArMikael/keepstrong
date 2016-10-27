@@ -1,6 +1,9 @@
 ;(function() {
     'use strict';
 
+    MainConfig.$inject = ["$urlRouterProvider", "$logProvider"];
+    MainRun.$inject = ["$log", "$rootScope", "$state", "$stateParams", "dbc"];
+    MainController.$inject = ["$rootScope", "$log"];
     angular.module('kpStr', [
             'ngAnimate',
             'ui.router',
@@ -21,6 +24,11 @@
         .controller('MainCtrl', MainController);
 
 
+    angular.element(function() {
+        angular.bootstrap(document.body, ['kpStr']);
+    });
+
+
     // @ngInject
     function MainConfig($urlRouterProvider, $logProvider) {
         $logProvider.debugEnabled(true);
@@ -28,7 +36,6 @@
         $urlRouterProvider
             .otherwise('/');
     }
-    MainConfig.$inject = ["$urlRouterProvider", "$logProvider"];
 
 
     // @ngInject
@@ -51,7 +58,6 @@
         $rootScope.$state = $state;
         $rootScope.$stateParams = $stateParams;
     }
-    MainRun.$inject = ["$log", "$rootScope", "$state", "$stateParams", "dbc"];
 
 
     // @ngInject
@@ -62,12 +68,12 @@
 
         mc.message = 'Welcome to the KeepStrong App!';
     }
-    MainController.$inject = ["$rootScope", "$log"];
 
 })();
 (function(){
     "use strict";
 
+    AboutConfig.$inject = ["$stateProvider"];
     angular.module('kpStr.about', [])
         .config(AboutConfig);
 
@@ -83,12 +89,12 @@
             });
 
     }
-    AboutConfig.$inject = ["$stateProvider"];
 
 })();
 (function(){
     "use strict";
 
+    AboutController.$inject = ["$scope", "$rootScope", "$interval"];
     angular.module('kpStr.about')
         .controller('AboutCtrl', AboutController);
 
@@ -109,13 +115,13 @@
             ac.usersCount += 3;
         }, 1000);
     }
-    AboutController.$inject = ["$scope", "$rootScope", "$interval"];
 
 })();
 (function () {
     'use strict';
 
     // Data Base Connection to Firebase
+    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
     angular.module('kpStr.dbc', [
         'firebase'
     ])
@@ -160,12 +166,47 @@
 
         return service;
     }
-    dbcFactory.$inject = ["FURL", "$firebaseAuth"];
 
+})();
+(function(){
+    "use strict";
+
+    HomeConfig.$inject = ["$stateProvider"];
+    angular.module('kpStr.home', [])
+        .config(HomeConfig);
+
+    // @ngInject
+    function HomeConfig($stateProvider) {
+        $stateProvider
+            .state('home', {
+                url: '/',
+                controller: 'HomeCtrl',
+                controllerAs: 'hc',
+                templateUrl: 'app/home/home.html',
+                authenticate: false
+
+            })
+    }
+
+})();
+(function(){
+    "use strict";
+    
+    angular.module('kpStr.home')
+        .controller('HomeCtrl', HomeController);
+    
+    // @ngInject
+    function HomeController() {
+        var hc = this;
+
+        console.log('HomeController');
+    }
+    
 })();
 (function() {
     'use strict';
 
+    ExercisesConfig.$inject = ["$stateProvider"];
     angular.module('kpStr.exercises', [
         'kpStr.dbc'
     ])
@@ -201,7 +242,6 @@
                 authenticate: true
             })
     }
-    ExercisesConfig.$inject = ["$stateProvider"];
 
 })();
 
@@ -209,6 +249,7 @@
 (function(){
     "use strict";
 
+    ExercisesController.$inject = ["$rootScope", "exercises", "$log"];
     angular.module('kpStr.exercises')
         .controller('ExercisesCtrl', ExercisesController);
 
@@ -274,7 +315,6 @@
         $log.debug('ExercisesController');
 
     }
-    ExercisesController.$inject = ["$rootScope", "exercises", "$log"];
 
 })();
 (function(){
@@ -307,6 +347,7 @@
 (function(){
     "use strict";
 
+    exercisesFactory.$inject = ["dbc", "$log", "$firebaseArray", "$firebaseObject"];
     angular.module('kpStr.exercises')
         .factory('exercises', exercisesFactory);
 
@@ -364,47 +405,13 @@
 
         return exercises;
     }
-    exercisesFactory.$inject = ["dbc", "$log", "$firebaseArray", "$firebaseObject"];
 
-})();
-(function(){
-    "use strict";
-
-    angular.module('kpStr.home', [])
-        .config(HomeConfig);
-
-    // @ngInject
-    function HomeConfig($stateProvider) {
-        $stateProvider
-            .state('home', {
-                url: '/',
-                controller: 'HomeCtrl',
-                controllerAs: 'hc',
-                templateUrl: 'app/home/home.html',
-                authenticate: false
-
-            })
-    }
-    HomeConfig.$inject = ["$stateProvider"];
-
-})();
-(function(){
-    "use strict";
-    
-    angular.module('kpStr.home')
-        .controller('HomeCtrl', HomeController);
-    
-    // @ngInject
-    function HomeController() {
-        var hc = this;
-
-        console.log('HomeController');
-    }
-    
 })();
 (function(){
     'use strict';
 
+    ProfileConfig.$inject = ["$stateProvider"];
+    ProfileController.$inject = ["usersFactory", "$stateParams"];
     angular.module('kpStr.profile', [
         'kpStr.users'
     ])
@@ -424,7 +431,6 @@
                 authenticate: true
             })
     }
-    ProfileConfig.$inject = ["$stateProvider"];
 
 
     // @ngInject
@@ -437,7 +443,6 @@
             });
 
     }
-    ProfileController.$inject = ["usersFactory", "$stateParams"];
 
 })();
 (function(){
@@ -451,9 +456,9 @@
     function kpstrProgress() {
         var directive = {
             restrict: 'EAC',
-            // scope: false, // Shared scope (default)
-            // scope: true, // Inherited scope
-            // scope: {}, // Isolated scope
+            // scope: false, // Shared scope (default) - variables from both scopes available to each other
+            // scope: true, // Inherited scope - variables from directive is not available to the parent scope
+            // scope: {}, // Isolated scope - variables from both scopes are not available to each other
             scope: { //
                 max: '@'
             },
@@ -491,6 +496,7 @@
 (function(){
     'use strict';
 
+    registrationConfig.$inject = ["$stateProvider"];
     angular.module('kpStr.registration', [
         'kpStr.dbc'
     ])
@@ -517,7 +523,6 @@
                 authenticate: false
             })
     }
-    registrationConfig.$inject = ["$stateProvider"];
 
 })();
 
@@ -526,6 +531,7 @@
 (function(){
     'use strict';
 
+    RegistrationController.$inject = ["regFactory", "$state"];
     angular.module('kpStr.registration')
         .controller('RegCtrl', RegistrationController);
 
@@ -574,13 +580,13 @@
                 });
         };
     }
-    RegistrationController.$inject = ["regFactory", "$state"];
 
 
 })();
 (function(){
     'use strict';
 
+    registrationFactory.$inject = ["dbc", "$rootScope", "usersFactory", "$firebaseObject"];
     angular.module('kpStr.registration')
         .factory('regFactory', registrationFactory);
 
@@ -703,7 +709,6 @@
 
         return service;
     }
-    registrationFactory.$inject = ["dbc", "$rootScope", "usersFactory", "$firebaseObject"];
 
 })();
 /**
@@ -713,6 +718,9 @@
 ;(function() {
     'use strict';
 
+    StatsController.$inject = ["$rootScope", "StatsFactory"];
+    StatsConfig.$inject = ["$stateProvider"];
+    StatsFactory.$inject = ["$http"];
     angular.module('kpStr.stats', [])
         .config(StatsConfig)
         .factory('StatsFactory', StatsFactory)
@@ -731,7 +739,6 @@
 
         return dataFactory;
     }
-    StatsFactory.$inject = ["$http"];
 
 
     //function StatsFactory($http) {
@@ -777,7 +784,6 @@
 
         console.log('sc.persons', sc.persons);
     }
-    StatsController.$inject = ["$rootScope", "StatsFactory"];
 
 
     // @ngInject
@@ -790,7 +796,6 @@
                 templateUrl: 'app/statistics/statistics.html'
             });
     }
-    StatsConfig.$inject = ["$stateProvider"];
 
 
 
@@ -870,6 +875,7 @@
 ;(function(){
 	'use strict';
 
+		usersConfig.$inject = ["$stateProvider"];
 	angular.module('kpStr.users', [
 				'kpStr.dbc'
 			])
@@ -908,12 +914,12 @@
 					}
 				})
 		}
-		usersConfig.$inject = ["$stateProvider"];
 
 })();
 (function(){
 	'use strict';
 
+	UsersController.$inject = ["$rootScope", "usersFactory"];
 	angular.module('kpStr.users')
 		.controller('UsersCtrl', UsersController);
 
@@ -983,12 +989,12 @@
 		//	uc.user = _response;
 		//})
 	}
-	UsersController.$inject = ["$rootScope", "usersFactory"];
 
 })();
 (function(){
 	'use strict';
 
+	usersFactory.$inject = ["$rootScope", "dbc", "$firebaseArray", "$firebaseObject"];
 	angular.module('kpStr.users')
 		.factory('usersFactory', usersFactory);
 
@@ -1070,12 +1076,12 @@
 
 		return service;
 	}
-	usersFactory.$inject = ["$rootScope", "dbc", "$firebaseArray", "$firebaseObject"];
 	
 })();
 (function(){
     "use strict";
 
+    WorkoutsConfig.$inject = ["$stateProvider"];
     angular.module('kpStr.workouts', [
         'kpStr.dbc'
     ])
@@ -1092,13 +1098,13 @@
                 authenticate: true
             })
     }
-    WorkoutsConfig.$inject = ["$stateProvider"];
 
 
 })();
 (function(){
     "use strict";
 
+    WorkoutsController.$inject = ["$rootScope", "$log", "workouts"];
     angular.module('kpStr.workouts')
         .controller('WorkoutsCtrl', WorkoutsController);
 
@@ -1159,12 +1165,12 @@
 
         //wc.workouts = workouts.getWorkouts();
     }
-    WorkoutsController.$inject = ["$rootScope", "$log", "workouts"];
 
 })();
 (function(){
     "use strict";
 
+    WorkoutsFactory.$inject = ["$rootScope", "$log", "$firebaseArray", "$firebaseObject", "dbc"];
     angular.module('kpStr.workouts')
         .factory('workouts', WorkoutsFactory);
 
@@ -1224,6 +1230,5 @@
 
         return service;
     }
-    WorkoutsFactory.$inject = ["$rootScope", "$log", "$firebaseArray", "$firebaseObject", "dbc"];
 
 })();
