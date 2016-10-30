@@ -91,32 +91,32 @@
     }
 
 })();
-(function(){
-    "use strict";
-
-    AboutController.$inject = ["$scope", "$rootScope", "$interval"];
-    angular.module('kpStr.about')
-        .controller('AboutCtrl', AboutController);
-
-    // @ngInject
-    function AboutController($scope, $rootScope, $interval) {
-        console.log('AboutController');
-        var ac = this;
-
-        ac.usersCount = 9;
-
-        $scope.$on('UsersBroadcast', function(event, msg){
-            console.log('GetAllUsersBroadcast $on catch event in AboutCtrl: ', event, msg);
-        });
-
-        // Angular аналог setInterval(), который включает в себя встроенный $scope.$apply() для отслеживания изменений
-        // и их передачи между View и Model.
-        $interval(function () {
-            ac.usersCount += 3;
-        }, 1000);
-    }
-
-})();
+// module app.about.controller {
+//
+//     interface aboutControllerModel {
+//         title: string,
+//         employees: [any],
+//         writeFeedback(): void
+//     }
+//
+//
+//     class AboutController implements aboutControllerModel {
+//         title: 'About us';
+//         employees: ['Ben', 'Roman', 'Moshe'];
+//         writeFeedback(): void {
+//             console.log('feedback');
+//         }
+//
+//         constructor() {
+//
+//         }
+//
+//     }
+//
+//     angular.module('kpStr.about')
+//         .controller('AboutCtrl', AboutController);
+// } 
+//# sourceMappingURL=about.controller.js.map
 (function () {
     'use strict';
 
@@ -167,41 +167,6 @@
         return service;
     }
 
-})();
-(function(){
-    "use strict";
-
-    HomeConfig.$inject = ["$stateProvider"];
-    angular.module('kpStr.home', [])
-        .config(HomeConfig);
-
-    // @ngInject
-    function HomeConfig($stateProvider) {
-        $stateProvider
-            .state('home', {
-                url: '/',
-                controller: 'HomeCtrl',
-                controllerAs: 'hc',
-                templateUrl: 'app/home/home.html',
-                authenticate: false
-
-            })
-    }
-
-})();
-(function(){
-    "use strict";
-    
-    angular.module('kpStr.home')
-        .controller('HomeCtrl', HomeController);
-    
-    // @ngInject
-    function HomeController() {
-        var hc = this;
-
-        console.log('HomeController');
-    }
-    
 })();
 (function() {
     'use strict';
@@ -406,6 +371,41 @@
         return exercises;
     }
 
+})();
+(function(){
+    "use strict";
+
+    HomeConfig.$inject = ["$stateProvider"];
+    angular.module('kpStr.home', [])
+        .config(HomeConfig);
+
+    // @ngInject
+    function HomeConfig($stateProvider) {
+        $stateProvider
+            .state('home', {
+                url: '/',
+                controller: 'HomeCtrl',
+                controllerAs: 'hc',
+                templateUrl: 'app/home/home.html',
+                authenticate: false
+
+            })
+    }
+
+})();
+(function(){
+    "use strict";
+    
+    angular.module('kpStr.home')
+        .controller('HomeCtrl', HomeController);
+    
+    // @ngInject
+    function HomeController() {
+        var hc = this;
+
+        console.log('HomeController');
+    }
+    
 })();
 (function(){
     'use strict';
@@ -872,6 +872,27 @@
 
 
 })();
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var core_1 = require('@angular/core');
+var TrainersComponent = (function () {
+    function TrainersComponent() {
+    }
+    TrainersComponent = __decorate([
+        core_1.Component({
+            selector: "trainers",
+            template: "\n        <h2>Trainers List</h2>\n        <ul class=\"trainers-list\">\n            <li class=\"trainer-item\">Muhatma Gandhi</li>\n            <li class=\"trainer-item\">Alexander Macedon</li>\n            <li class=\"trainer-item\">Sun Tzi</li>\n            <li class=\"trainer-item\">Mouses</li>\n        </ul>\n    "
+        })
+    ], TrainersComponent);
+    return TrainersComponent;
+}());
+exports.TrainersComponent = TrainersComponent;
+//# sourceMappingURL=trainers.component.js.map
 ;(function(){
 	'use strict';
 
